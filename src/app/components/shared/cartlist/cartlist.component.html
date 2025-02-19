@@ -1,0 +1,27 @@
+<div class="cart-sidebar-body">
+    <perfect-scrollbar class="cart-sidebar-scroll">
+        <div class="cart-sidebar-item" *ngFor="let item of cart">
+            <div class="media">
+                <a routerLink="/menu-item-v1/1"><img [src]="item.img" alt="{{item.name}}"></a>
+                <div class="media-body">
+                    <h5> <a routerLink="/menu-item-v1/1" title="{{item.name}}">{{item.name}}</a> </h5>
+                    <span>{{item.qty}}x {{item.price | number:'1.2-2'}}$</span>
+                </div>
+            </div>
+            <div class="cart-sidebar-item-meta">
+                <span *ngFor="let item of item.flavours">{{item}}</span>
+            </div>
+            <div class="cart-sidebar-price">
+                {{item.price * item.qty | number:'1.2-2'}}$
+            </div>
+            <div class="close-btn">
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </perfect-scrollbar>
+</div>
+<div class="cart-sidebar-footer">
+    <h4>Total: <span>{{calculateprice() | number:'1.2-2'}}$</span> </h4>
+    <button type="submit" class="btn-custom">Checkout</button>
+</div>

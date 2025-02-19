@@ -1,0 +1,27 @@
+<!-- Blog Posts Start -->
+<div class="section section-padding">
+    <div class="blog-fw">
+        <ng-masonry-grid [masonryOptions]="{ transitionDuration: '0.8s', percentPosition: true }" [useAnimation]="true"
+        [useImagesLoaded]="true" class="row masonry">
+            <!-- Post Start -->
+            <ng-masonry-grid-item class="{{item.fullview}} masonry-item" *ngFor="let item of blogpost">
+                <article class="post">
+                    <h3 class="post-title"> <a routerLink="/blog-single/{{item.id}}">{{item.title}}</a> </h3>
+                    <div class="post-meta">
+                        <span> <i class="far fa-calendar"></i> <a routerLink="/blog-single/{{item.id}}">{{item.postdate}}</a> </span>
+                        <span> <i class="far fa-user"></i> <a routerLink="/blog-single/{{item.id}}">{{item.author.name}}</a> </span>
+                    </div>
+                    <div class="post-thumbnail">
+                        <a routerLink="/blog-single/{{item.id}}"><img [src]="item.image" alt="{{item.title}}"></a>
+                    </div>
+                    <div class="post-desc">
+                        <p>{{item.shortdesc}}</p>
+                    </div>
+                    <a routerLink="/blog-single/{{item.id}}" class="read-more">Read More</a>
+                </article>
+            </ng-masonry-grid-item>
+            <!-- Post End -->
+        </ng-masonry-grid>
+    </div>
+</div>
+<!-- Blog Posts End -->

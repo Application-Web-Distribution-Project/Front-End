@@ -1,0 +1,18 @@
+<!-- Banner Start -->
+<div class="banner banner-2">
+    <ngx-slick-carousel #slickModal="slick-carousel" [config]="settings" class="banner-slider-2">
+        <div ngxSlickItem class="banner-item" *ngFor="let item of banner">
+            <div class="banner-bg bg-cover" style="background-image: url('{{item.bg}}')"></div>
+            <div class="banner-inner">
+                <div class="banner-text">
+                    <h1 class="title">{{item.title}}</h1>
+                    <h4>{{item.subtitle}}</h4>
+                    <p class="subtitle">{{item.desc}}</p>
+                </div>
+                <a routerLink="/menu-v1" class="btn-custom primary">Join Now</a>
+            </div>
+            <img [src]="item.img" alt="{{item.title}}">
+        </div>
+    </ngx-slick-carousel>
+</div>
+<!-- Banner End -->

@@ -1,0 +1,20 @@
+<!-- Instagram Start -->
+<div class="section pt-0">
+    <div class="container">
+        <div class="section-title-wrap section-header text-center">
+            <h5 class="custom-primary">Instagram</h5>
+            <h2 class="title">We Love Sharing What We Do</h2>
+            <p class="subtitle">
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s
+            </p>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-4 col-6" *ngFor="let item of insta | slice:0:6">
+                <a href="#" class="ct-ig-item ig-2">
+                    <img [src]="item.img" alt="ig">
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Instagram End -->

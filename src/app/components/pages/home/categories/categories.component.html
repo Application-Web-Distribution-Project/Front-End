@@ -1,0 +1,68 @@
+<!-- Categories Start -->
+<div class="ct-categories">
+    <!-- Category Start -->
+    <div class="ct-category">
+        <div class="ct-category-bg" style="background-image: url('assets/img/categories-lg/4.jpg')"></div>
+        <div class="ct-category-content">
+            <div class="ct-category-content-inner">
+                <div class="section-title-wrap section-header">
+                    <h5 class="custom-primary">Pizza Menu</h5>
+                    <h2 class="title">Our Passion, Our Heritage, Our Pizzas </h2>
+                    <p class="subtitle">
+                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy
+                    </p>
+                </div>
+                <!-- Menu Start -->
+                <div class="row">
+                    <div class="col-lg-6" *ngFor="let item of pizzamenu">
+                        <div class="ct-mini-menu-item">
+                            <div class="ct-mini-menu-top">
+                                <h5>{{item.title}}</h5>
+                                <div class="ct-mini-menu-dots"></div>
+                                <span class="custom-primary">{{item.price | number:'1.2-2'}}$</span>
+                            </div>
+                            <div class="ct-mini-menu-bottom">
+                                <p>{{item.shortdesc}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Menu End -->
+            </div>
+        </div>
+    </div>
+    <!-- Category End -->
+    <!-- Category Start -->
+    <div class="ct-category">
+        <div class="ct-category-content">
+            <div class="ct-category-content-inner">
+                <div class="section-title-wrap section-header">
+                    <h5 class="custom-primary">Pasta Menu</h5>
+                    <h2 class="title">Did Someone Say Italian Food?</h2>
+                    <p class="subtitle">
+                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy
+                    </p>
+                </div>
+                <!-- Menu Start -->
+                <div class="row">
+                    <div class="col-lg-6" *ngFor="let item of pastamenu">
+                        <div class="ct-mini-menu-item">
+                            <div class="ct-mini-menu-top">
+                                <h5>{{item.title}}</h5>
+                                <div class="ct-mini-menu-dots"></div>
+                                <span class="custom-primary">{{item.price | number:'1.2-2'}}$</span>
+                            </div>
+                            <div class="ct-mini-menu-bottom">
+                                <p>{{item.shortdesc}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Menu End -->
+            </div>
+        </div>
+        <div class="ct-category-bg" style="background-image: url('assets/img/categories-lg/5.jpg')"></div>
+    </div>
+    <!-- Category End -->
+</div>
+<!-- Categories End -->

@@ -1,0 +1,23 @@
+<!-- Order Online Start -->
+<div class="section">
+    <div class="container">
+        <div class="section text-center cta-2 cta bg-cover bg-center dark-overlay dark-overlay-2 bg-parallax" style="background-image: url('assets/img/bg/cta-2.jpg')">
+            <div class="section-title-wrap section-header text-center">
+                <h5 class="custom-primary">Get Crafty</h5>
+                <h2 class="title text-white">Build Your Own Pizza Today</h2>
+                <p class="subtitle text-white">
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s
+                </p>
+            </div>
+            <a routerLink="/menu-item-v2/1" class="btn-custom shadow-none">Build Your Pizza</a>
+        </div> 
+        <div class="container">
+            <ngx-slick-carousel #slickModal="slick-carousel" [config]="settings"  class="gallery-slider row">
+                <a ngxSlickItem href="{{item.img}}" class="gallery-thumb" *ngFor="let item of gallery">
+                    <img [src]="item.img" alt="post">
+                </a>
+            </ngx-slick-carousel>
+        </div>
+    </div>
+</div>
+<!-- Order Online End -->

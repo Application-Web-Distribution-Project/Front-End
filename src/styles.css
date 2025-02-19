@@ -1,0 +1,307 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~leaflet/dist/leaflet.css";
+.slick-dots li,
+.slick-dots{
+  width:auto;
+}
+.slick-dots li button:before{
+  display: none;
+}
+.slick-slider{
+  overflow: hidden;
+}
+:focus {
+  outline: none;
+}
+.main-aside .aside-scroll{
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+:focus {
+    outline: none;
+}
+.cart-open.cart-sidebar {
+    right: 0;
+}
+.cart-open+.cart-sidebar-overlay {
+    opacity: 1;
+    visibility: visible;
+}
+.search-form-wrapper app-search {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cart-sidebar-scroll{
+    height: calc(100vh - 270px);
+}
+app-headertwo app-menu {
+    margin-right: auto;
+}
+.main-header.header-light .navbar> app-menu > ul > .menu-item > a {
+    color: #fff;
+}
+.slick-current .banner-nav-item .banner-nav-item-inner {
+    background-color: #FCCC4C;
+}
+.banner-nav-item-inner .banner-nav-item-body span {
+    text-decoration: none;
+    color: #515151;
+}
+.slick-current .banner-nav-item .banner-nav-item-inner h5, 
+.slick-current .banner-nav-item .banner-nav-item-inner span, 
+.slick-current .banner-nav-item .banner-nav-item-inner .banner-nav-item-body span {
+    color: #fff;
+}
+.slick-current.banner-nav-item .banner-nav-item-inner .banner-nav-item-body span + span,
+.banner-nav-item-inner .banner-nav-item-body span + span{
+    text-decoration: line-through;
+    color: #b9b9b9;
+    margin-left: 10px;
+}
+.modal-header.modal-bg{
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-color: #1D2228;
+}
+.close-btn {
+    border: 0;
+    background-color: transparent;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    outline: none;
+  }
+  .close-btn:hover{
+    background-color: transparent!important;
+  }
+  .close-btn:focus {
+    outline: none;
+  }
+  
+  .close-btn span {
+    position: absolute;
+    width: 2px;
+    height: 15px;
+    display: block;
+    background-color: #fff;
+    opacity: 0.6;
+    transform-origin: center;
+    transform: rotate(45deg);
+    transition: 0.3s;
+    font-size: 0;
+  }
+  .close-btn span.sr-only{
+    clip:unset;
+  }
+  .close-btn.close-btn-dark span {
+    background-color: #1D2228;
+  }
+  .close-btn.close-btn-danger span {
+    background-color: red;
+  }
+  
+  .close-btn span:nth-child(2) {
+    transform: rotate(-45deg);
+  }
+  
+  .close-btn:hover span {
+    transform: rotate(90deg);
+  }
+  
+  .close-btn:hover span:nth-child(2) {
+    transform: rotate(-90deg);
+  }
+  
+  .close-btn.dark span {
+    background-color: #1D2228;
+  }
+  .modal .close-btn{
+    margin: 0;
+    opacity: 1;
+      padding: 0;
+  }
+  .modal .close-btn{
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+  }
+  
+.leaflet-touch .leaflet-control-layers, .leaflet-touch .leaflet-bar{
+  border: none;
+}
+.leaflet-bar a{
+  width: 26px!important;
+  height: 26px!important;
+  line-height: 26px!important;
+}
+.leaflet-bar a.leaflet-disabled {
+  cursor: default;
+  background-color: #f4f4f4;
+  color: #bbb;
+}
+/* Pagination */
+pagination-template .ngx-pagination{
+  margin-top: 20px;
+  justify-content: center;
+  margin-bottom: 0;
+  display: flex;
+  padding-left: 0;
+  list-style: none;
+  border-radius: .25rem;
+}
+pagination-template .ngx-pagination li{
+  margin: 0;
+  position: relative;
+}
+pagination-template .ngx-pagination li.pagination-next,
+pagination-template .ngx-pagination li.pagination-previous{
+  padding: 0;
+  display: block;
+}
+pagination-template .ngx-pagination li.pagination-next span,
+pagination-template .ngx-pagination li.pagination-previous span,
+pagination-template .ngx-pagination li a{
+  border-radius: 8px;
+  color: #18181D;
+  border: 0;
+  background-color: #F0F2F3;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 15px 20px!important;
+  margin: 0;
+  position: relative;
+  margin-left: 15px;
+  display: block;
+  line-height: 1.25;
+}
+pagination-template .ngx-pagination li.current{
+  border-radius: 8px;
+  color: #fff;
+  border: 0;
+  background-color: #ED4E53;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 15px 20px!important;
+  margin: 0;
+  position: relative;
+  margin-left: 15px;
+  display: block;
+  line-height: 1.25;
+}
+pagination-template .ngx-pagination li.pagination-next::after,
+pagination-template .ngx-pagination li.pagination-next a:after,
+pagination-template .ngx-pagination li.pagination-previous a::before,
+pagination-template .ngx-pagination li.pagination-previous::before{
+  display: none!important;
+}
+ngb-rating:focus{
+  outline: none;
+}
+.sidebar-widget .media > a{
+  height:90px;
+}
+.sidebar-widget .media > a > img{
+  height: 100%;
+  object-fit: cover;
+}
+.custom-control-label::before{
+    background-color: #dee2e6;
+    border: none;
+}
+.comments-list .comment-item .ct-rating ngb-rating span{
+  position: relative;
+  top: 0;
+  font-size: 12px;
+}
+.accordion.with-gap .card-header{
+  padding: 0;
+}
+.accordion.with-gap .card-header .btn-link{
+  position: relative;
+    background-color: #fff;
+    border-bottom: 0;
+    padding: 15px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    text-transform: none;
+    font-weight: 700;
+    color: #1D2228;
+    font-size: 14px;
+    line-height: 1;
+    border: none;
+    width: 100%;
+}
+.accordion .card .card-header .btn-link.collapsed i {
+  font-weight: 400;
+  font-size: 28px;
+  color: #1D2228;
+}
+
+.accordion .card-header .btn-link i {
+  color: #ED4E53;
+  font-weight: 400;
+  font-size: 28px;
+  margin-left: 0;
+}
+.accordion .card-header .btn-link:focus{
+  box-shadow: none;
+}
+.accordion .card-header .btn-link:hover i {
+  transform: translateX(0px);
+}
+.accordion .card-header::before,
+.accordion .card-header::after{
+  display: none;
+}
+.accordion .card-header .btn-link::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  margin-top: -3px;
+  right: 1.25rem;
+  width: 10px;
+  height: 2px;
+  background-color: #848486;
+  transform-origin: center;
+  transition: 0.3s;
+  opacity: 1;
+  transform: rotate(90deg);
+}
+.accordion .card-header .btn-link::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  margin-top: -3px;
+  right: 1.25rem;
+  width: 10px;
+  height: 2px;
+  background-color: #848486;
+  transform-origin: center;
+  transition: 0.3s;
+  opacity: 1;
+}
+.accordion .card-header .btn-link[aria-expanded="true"]::before {
+  -webkit-transform: rotate(0);
+  -ms-transform: rotate(0);
+  transform: rotate(0);
+  opacity: 0;
+}
+.accordion .card-header .btn-link[aria-expanded="true"]::after, 
+.accordion .card-header .btn-link[aria-expanded="true"]::before {
+  background-color: #1D2228;
+}
+.accordion .card-header .btn-link[aria-expanded="true"] {
+  background-color: #f8f9fa;
+  color: #1D2228;
+}

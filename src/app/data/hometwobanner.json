@@ -1,0 +1,18 @@
+[
+    {
+        "id":1,
+        "bg":"assets/img/banner/1.jpg",
+        "img":"assets/img/veg/12.png",
+        "title":"Italian Pizza Never Got Any Better",
+        "subtitle":"It is the cheese that lures us into eating",
+        "desc":"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+    },
+    {
+        "id":2,
+        "bg":"assets/img/banner/2.jpg",
+        "img":"assets/img/veg/12.png",
+        "title":"Celebrating 100 Years of Cheesy Pizza",
+        "subtitle":"Join our grand opening tonight for free pizza",
+        "desc":"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+    }
+]

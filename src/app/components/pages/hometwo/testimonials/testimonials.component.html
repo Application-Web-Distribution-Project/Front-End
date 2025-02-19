@@ -1,0 +1,32 @@
+<section class="section testimonials">
+    <div class="container">
+        <div class="section-title-wrap section-header text-center">
+            <h5 class="custom-primary">Our Backbone</h5>
+            <h2 class="title">Customer Testimonials</h2>
+            <p class="subtitle">
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s
+            </p>
+        </div>
+        <ngx-slick-carousel #slickModal="slick-carousel" [config]="settings"  class="ct-testimonials-slider">
+            <!-- Testimonial item start -->
+            <div ngxSlickItem class="ct-testimonial-slider-item" *ngFor="let item of testimonials">
+                <div class="ct-testimonial-item">
+                    <div class="ct-testimonial-thumb">
+                        <img [src]="item.img" alt="{{item.name}}">
+                    </div>
+                    <div class="ct-testimonial-content">
+                        <i class="flaticon-left-quote"></i>
+                        <p>{{item.comment}}</p>
+                        <h5>{{item.name}}</h5>
+                        <span>{{item.desig}}</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Testimonial item end -->
+        </ngx-slick-carousel>
+        <div class="ct-arrows centered-arrows with-margin">
+            <i class="fas fa-arrow-left slider-prev"></i>
+            <i class="fas fa-arrow-right slider-next"></i>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,30 @@
+<!-- Gallery Start -->
+<div class="section pt-0">
+    <div class="gallery-section">
+        <div class="row no-gutters">
+            <div class="col-xl-6 col-lg-3 col-md-3 col-6 p-0" *ngFor="let item of insta | slice:0:4">
+                <a href="{{item.img}}" class="gallery-thumb">
+                    <img [src]="item.img" alt="ig">
+                </a>
+            </div>
+        </div>
+        <div class="gallery-bg bg-parallax dark-overlay dark-overlay-2 bg-cover" style="background-image: url('assets/img/subheader.jpg')">
+            <div class="section-title-wrap text-center">
+                <h5 class="custom-primary">A Community</h5>
+                <h2 class="title text-white">Stories of Passion</h2>
+                <p class="subtitle text-white">
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been.
+                </p>
+                <a routerLink="/blog-grid" class="btn-custom shadow-none">Read Stories</a>
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <div class="col-xl-6 col-lg-3 col-md-3 col-6 p-0" *ngFor="let item of insta | slice:4:8">
+                <a href="{{item.img}}" class="gallery-thumb">
+                    <img [src]="item.img" alt="ig">
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Gallery End -->

@@ -1,0 +1,85 @@
+<!--Cart Start -->
+<section class="section">
+    <div class="container">
+        <!-- Cart Table Start -->
+        <table class="ct-responsive-table">
+            <thead>
+                <tr>
+                    <th class="remove-item"></th>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Qunantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of cart">
+                    <td class="remove">
+                        <button type="button" class="close-btn close-danger remove-from-cart">
+                            <span></span>
+                            <span></span>
+                        </button>
+                    </td>
+                    <td data-title="Product">
+                        <div class="cart-product-wrapper">
+                            <img [src]="item.img" alt="{{item.name}}">
+                            <div class="cart-product-body">
+                                <h6> <a routerLink="/menu-item-v1/1">{{item.name}}</a> </h6>
+                                <p *ngFor="let item of item.flavours">{{item}}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td data-title="Price"> <strong>{{item.price | number:'1.2-2'}}$</strong> </td>
+                    <td class="quantity" data-title="Quantity">
+                        <div class="qty">
+                            <span class="qty-subtract" (click)="decrement(item)"><i class="fa fa-minus"></i></span>
+                            <input type="text" name="qty" value="{{item.qty}}"/>
+                            <span class="qty-add" (click)="increment(item)"><i class="fa fa-plus"></i></span>
+                        </div>
+                    </td>
+                    <td data-title="Total"> <strong>{{item.price * item.qty | number:'1.2-2'}}$</strong> </td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- Cart Table End -->
+        <!-- Coupon Code Start -->
+        <div class="row">
+            <div class="col-lg-5">
+                <div class="form-group mb-0">
+                    <div class="input-group mb-0">
+                        <input type="text" class="form-control" placeholder="Enter Coupon Code" aria-label="Coupon Code">
+                        <div class="input-group-append">
+                            <button class="btn-custom shadow-none" type="button">Apply</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Coupon Code End -->
+        <!-- Cart form Start -->
+        <div class="row ct-cart-form">
+            <div class="offset-lg-6 col-lg-6">
+                <h4>Cart Total</h4>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Subtotal</th>
+                            <td>{{calculateprice() | number:'1.2-2'}}$</td>
+                        </tr>
+                        <tr>
+                            <th>Tax</th>
+                            <td> {{taxvalue}}$ <span class="small">(11%)</span> </td>
+                        </tr>
+                        <tr>
+                            <th>Total</th>
+                            <td> <b>{{calculateprice() + taxvalue | number:'1.2-2'}}$</b> </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="submit" class="btn-custom primary btn-block">Proceeed to Checkout</button>
+            </div>
+        </div>
+        <!-- Cart form End -->
+    </div>
+</section>
+<!-- Cart End -->

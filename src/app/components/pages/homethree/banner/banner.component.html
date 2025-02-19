@@ -1,0 +1,57 @@
+<!-- Banner Start -->
+<div class="banner banner-3">
+    <ngx-slick-carousel #slickModal="slick-carousel" [config]="settings" [config]="slideConfig" class="banner-slider-3">
+        <div ngxSlickItem class="banner-item" *ngFor="let item of banner">
+            <div class="banner-inner" style="background-image: url('{{item.img}}')">
+                <h1 class="title">{{item.title}}</h1>
+                <div class="ct-rating-wrapper">
+                    <div class="ct-rating">
+                        <ngb-rating [max]="5" [(rate)]="item.rating" [readonly]="true">
+                            <ng-template let-fill="fill" let-index="index">
+                                <i class="fas fa-star" [class.active]="fill === 100"></i>
+                            </ng-template>
+                        </ngb-rating>
+                    </div>
+                </div>
+                <div class="banner-text">
+                    <p class="subtitle">{{item.shortdesc}}</p>
+                    <div class="banner-icons-wrapper">
+                        <div class="banner-icon">
+                            <i class="flaticon-calories"></i>
+                            <div class="banner-icon-body">
+                                <h5>{{item.calories}}</h5>
+                                <span>Calories</span>
+                            </div>
+                        </div>
+                        <div class="banner-icon">
+                            <i class="flaticon-cheese"></i>
+                            <div class="banner-icon-body">
+                                <h5>{{item.mozarella}}g</h5>
+                                <span>Mozarella</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="banner-controls">
+                        <a routerLink="/menu-v1" class="btn-custom primary">Order <i class="flaticon-shopping-bag"></i>
+                        </a>
+                        <h4>${{item.price | number:'1.2-2'}}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ngx-slick-carousel>
+    <div class="ct-arrows-wrapper">
+        <div class="slide-number">
+            <span class="current-slide">0<span>1</span></span> <span>/{{banner.length}}</span>
+        </div>
+        <div class="ct-arrows">
+            <div class="slider-prev slick-arrow">
+                Previous
+            </div>
+            <div class="slider-next slick-arrow">
+                Next
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Banner End -->

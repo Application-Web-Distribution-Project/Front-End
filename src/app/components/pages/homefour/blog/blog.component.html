@@ -1,0 +1,35 @@
+<!-- Blog Start -->
+<div class="section section-padding pt-0">
+    <div class="container">
+        <div class="section-title-wrap section-header text-center">
+            <h5 class="custom-primary">Latest News</h5>
+            <h2 class="title">From Our Blog</h2>
+            <p class="subtitle">
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy
+            </p>
+        </div>
+        <div class="row">
+            <!-- Post Start -->
+            <div class="col-lg-4" *ngFor="let item of blogpost | slice:0:3">
+                <article class="post">
+                    <h3 class="post-title"> 
+                        <a routerLink="/blog-single/{{item.id}}">{{item.title | slice:0:30}}...</a> 
+                    </h3>
+                    <div class="post-meta">
+                        <span> <i class="far fa-calendar"></i> <a routerLink="/blog-single/{{item.id}}">{{item.postdate}}</a> </span>
+                        <span> <i class="far fa-user"></i> <a routerLink="/blog-single/{{item.id}}">{{item.author.name}}</a> </span>
+                    </div>
+                    <div class="post-thumbnail">
+                        <a routerLink="/blog-single/{{item.id}}"><img [src]="item.image" alt="{{item.title}}"></a>
+                    </div>
+                    <div class="post-desc">
+                        <p>{{item.shortdesc}}</p>
+                    </div>
+                    <a routerLink="/blog-single/{{item.id}}" class="read-more">Read More</a>
+                </article>
+            </div>
+            <!-- Post End -->
+        </div>
+    </div>
+</div>
+<!-- Blog End -->

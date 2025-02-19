@@ -1,0 +1,21 @@
+<!-- Categories Start -->
+<div class="section pt-0 category-section">
+    <div class="container">
+        <!-- Arrow -->
+        <i class="slider-prev fas fa-arrow-left slick-arrow"></i>
+        <ngx-slick-carousel #slickModal="slick-carousel" [config]="settings" class="category-slider">
+            <div ngxSlickItem class="ct-category category-2" *ngFor="let item of products">
+                <div class="ct-category-desc">
+                    <h5 class="custom-primary" *ngFor="let cat of getCategory(item.category) | slice:0:1">{{cat.title}}</h5>
+                    <h3>{{item.name}}</h3>
+                    <p>{{item.shortdesc}}</p>
+                    <a routerLink="/menu-item-v1/{{item.id}}" class="btn-custom">Order Now</a>
+                </div>
+                <img [src]="item.img" alt="{{item.name}}">
+            </div>
+        </ngx-slick-carousel>
+        <!-- Arrow -->
+        <i class="slider-next fas fa-arrow-right slick-arrow"></i>
+    </div>
+</div>
+<!-- Categories End -->

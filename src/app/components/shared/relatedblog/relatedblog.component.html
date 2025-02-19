@@ -1,0 +1,27 @@
+<!-- Related Posts Start -->
+<div class="section p-0">
+    <h4>Related Posts</h4>
+    <ngx-slick-carousel #slickModal="slick-carousel" [config]="settings" class="related">
+        <!-- Post Start -->
+        <article ngxSlickItem class="post" *ngFor="let item of blogpost | slice:0:3">
+            <h3 class="post-title">
+                <a routerLink="/blog-single/{{item.id}}">{{item.title | slice:0:30}}...</a>
+            </h3>
+            <div class="post-meta">
+                <span> <i class="far fa-calendar"></i> <a routerLink="/blog-single/{{item.id}}">{{item.postdate}}</a>
+                </span>
+                <span> <i class="far fa-user"></i> <a routerLink="/blog-single/{{item.id}}">{{item.author.name}}</a>
+                </span>
+            </div>
+            <div class="post-thumbnail">
+                <a routerLink="/blog-single/{{item.id}}"><img [src]="item.image" alt="{{item.title}}"></a>
+            </div>
+            <div class="post-desc">
+                <p>{{item.shortdesc}}</p>
+            </div>
+            <a routerLink="/blog-single/{{item.id}}" class="read-more">Read More</a>
+        </article>
+        <!-- Post End -->
+    </ngx-slick-carousel>
+</div>
+<!-- Related Posts End -->

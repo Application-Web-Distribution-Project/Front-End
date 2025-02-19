@@ -1,0 +1,76 @@
+<!-- Cart Sidebar Start -->
+<div class="cart-sidebar-wrapper">
+    <aside class="cart-sidebar" [ngClass]="cartmethod ? '' : 'cart-open'">
+        <div class="cart-sidebar-header">
+            <h3>Your Cart</h3>
+            <div class="close-btn cart-trigger close-dark" (click)="cartToggle()">
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <app-cartlist></app-cartlist>
+    </aside>
+    <div class="cart-sidebar-overlay cart-trigger" (click)="cartToggle()">
+    </div>
+</div>
+<!-- Cart Sidebar End -->
+<!-- Search Form Start-->
+<div class="search-form-wrapper" [ngClass]="searchmethod ? '' : 'open'">
+    <div class="search-trigger close-btn" (click)="searchToggle()">
+        <span></span>
+        <span></span>
+    </div>
+    <app-search></app-search>
+</div>
+<!-- Search Form End-->
+<!-- Aside (Mobile Navigation) -->
+<aside class="main-aside" [ngClass]="navmethod ? '' : 'open'">
+    <a class="navbar-brand" routerLink="/"> <img src="assets/img/logo.png" alt="logo"> </a>
+    <div class="aside-scroll">
+        <app-mobilemenu></app-mobilemenu>
+    </div>
+</aside>
+<div class="aside-overlay aside-trigger" (click)="toggleNav()"></div>
+<!-- Header Start -->
+<header class="main-header header-1 header-absolute">
+    <div class="top-header">
+        <div class="container">
+            <div class="top-header-inner">
+                <div class="top-header-contacts">
+                    <ul class="top-header-nav">
+                        <li> <a class="p-0" routerLink="/tel:+123456789"><i class="fas fa-phone mr-2"></i> +123 456 789</a> </li>
+                    </ul>
+                </div>
+                <ul class="top-header-nav header-cta">
+                    <li> <a routerLink="/menu-v1">Order Online</a> </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <nav class="navbar">
+            <!-- Logo -->
+            <a class="navbar-brand" routerLink="/"> <img src="assets/img/logo.png" alt="logo"> </a>
+            <!-- Menu -->
+            <app-menu></app-menu>
+            <div class="header-controls">
+                <ul class="header-controls-inner">
+                    <li class="cart-dropdown-wrapper cart-trigger" (click)="cartToggle()">
+                        <span class="cart-item-count">{{cart.length}}</span>
+                        <i class="flaticon-shopping-bag"></i>
+                    </li>
+                    <li class="search-dropdown-wrapper search-trigger" (click)="searchToggle()">
+                        <i class="flaticon-search"></i>
+                    </li>
+                </ul>
+                <!-- Toggler -->
+                <div class="aside-toggler aside-trigger" (click)="toggleNav()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+    </div>
+</header>
+<!-- Header End -->

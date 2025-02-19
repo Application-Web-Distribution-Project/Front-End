@@ -1,0 +1,70 @@
+<!-- Banner Start -->
+<div class="banner banner-1 bg-cover">
+    <div class="imgs-wrapper">
+        <img src="assets/img/veg/11.png" alt="veg" class="d-none d-lg-block">
+    </div>
+    <ngx-slick-carousel #slickModal="slick-carousel" [config]="settings" class="banner-slider">
+        <div ngxSlickItem class="banner-item" *ngFor="let item of banner">
+            <div class="banner-inner">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-xl-6 col-lg-6">
+                            <h1 class="title">{{item.title}}</h1>
+                            <h4>{{item.subtitle}}</h4>
+                            <p class="subtitle">{{item.shortdesc}}</p>
+                            <div class="banner-icons-wrapper">
+                                <div class="banner-icon">
+                                    <i class="flaticon-calories"></i>
+                                    <div class="banner-icon-body">
+                                        <h5>{{item.calories}}</h5>
+                                        <span>Calories</span>
+                                    </div>
+                                </div>
+                                <div class="banner-icon">
+                                    <i class="flaticon-cheese"></i>
+                                    <div class="banner-icon-body">
+                                        <h5>{{item.mozarella}}g</h5>
+                                        <span>Mozarella</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="banner-controls">
+                                <a routerLink="/menu-v1" class="btn-custom primary">Order <i class="flaticon-shopping-bag"></i> </a>
+                                <h4>${{item.price | number:'1.2-2'}}</h4>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6">
+                            <img [src]="item.img" alt="{{item.title}}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ngx-slick-carousel>
+    <div class="banner-slider-nav">
+        <div class="container">
+            <!-- Arrow -->
+            <i class="slider-prev fas fa-arrow-left slick-arrow"></i>
+            <ngx-slick-carousel #slickModal="slick-carousel" [config]="settingsthumb" class="banner-slider-nav-inner">
+                <div ngxSlickItem class="banner-nav-item" *ngFor="let item of banner">
+                    <div class="banner-nav-item-inner">
+                        <div class="sale" *ngIf="item.offer">
+                            <div class="sale-inner">
+                                Offer
+                            </div>
+                        </div>
+                        <img [src]="item.img" alt="{{item.title}}">
+                        <div class="banner-nav-item-body">
+                            <h5>{{item.category}}</h5>
+                            <span *ngIf="item.discount">${{item.price * (100 - item.discount) / 100 |  number:'1.2-2'}}</span>
+                            <span>${{item.price | number:'1.2-2'}}</span>
+                        </div>
+                    </div>
+                </div>
+            </ngx-slick-carousel>
+            <!-- Arrow -->
+            <i class="slider-next fas fa-arrow-right slick-arrow"></i>
+        </div>
+    </div>
+</div>
+<!-- Banner End -->

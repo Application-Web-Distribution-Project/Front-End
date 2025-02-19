@@ -1,0 +1,36 @@
+<!-- Locations Wrapper Start -->
+<div class="section">
+    <div class="container locations-wrapper">
+        <div class="location-item" *ngFor="let item of locations">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="location-item-inner">
+                        <img [src]="item.img" alt="{{item.title}}">
+                        <div class="location-desc">
+                            <h3>{{item.title}}</h3>
+                            <p>{{item.brancetype}}</p>
+                        </div>
+                        <div class="location-info">
+                            <div class="row">
+                                <div class="col-6">
+                                    <span *ngFor="let item of item.location">{{item}}</span>
+                                </div>
+                                <div class="col-6">
+                                    <span> Give us a call: <a href="tel:{{item.contactno}}">{{item.contactno}}</a> </span>
+                                    <span> Email Us: <a href="mailto:{{item.emailid}}">{{item.emailid}}</a> </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="ct-contact-map-wrapper">
+                        <div class="ct-contact-map" leaflet [leafletOptions]="options" (leafletMapReady)="onMapReady($event)"></div>
+                        <a href="https://maps.google.com/?q={{item.mapdata}}" target="_blank" class="btn-custom shadow-none">View in Google Maps</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Locations Wrapper End -->

@@ -1,0 +1,34 @@
+<!-- Blog Posts Start -->
+<div class="section section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Post Start -->
+                <article class="post" *ngFor="let item of blogpost | paginate: { itemsPerPage: 2, currentPage: page }">
+                    <h3 class="post-title"> <a routerLink="/blog-single/{{item.id}}">{{item.title}}</a> </h3>
+                    <div class="post-meta">
+                        <span> <i class="far fa-calendar"></i> <a routerLink="/blog-single/{{item.id}}">{{item.postdate}}</a> </span>
+                        <span> <i class="far fa-user"></i> <a routerLink="/blog-single/{{item.id}}">{{item.author.name}}</a> </span>
+                    </div>
+                    <div class="post-thumbnail">
+                        <a routerLink="/blog-single/{{item.id}}"><img [src]="item.image" alt="{{item.title}}"></a>
+                    </div>
+                    <div class="post-desc">
+                        <p>{{item.shortdesc}}</p>
+                    </div>
+                    <a routerLink="/blog-single/{{item.id}}" class="read-more">Read More</a>
+                </article>
+                <!-- Post End -->
+                <!-- Pagination Start -->
+                <pagination-controls (pageChange)="page = $event"></pagination-controls>
+                <!-- Pagination End -->
+            </div>
+            <!-- Sidebar Start -->
+            <div class="col-lg-4">
+                <app-blogsidebar></app-blogsidebar>
+            </div>
+            <!-- Sidebar End -->
+        </div>
+    </div>
+</div>
+<!-- Blog Posts End -->

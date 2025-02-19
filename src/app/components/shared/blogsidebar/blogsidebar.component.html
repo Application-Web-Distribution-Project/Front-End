@@ -1,0 +1,24 @@
+<div class="sidebar">
+    <div class="sidebar-widget">
+        <form method="post">
+            <h5>Search Posts</h5>
+            <input type="text" class="form-control" placeholder="Search" name="sidebar-search" value="">
+        </form>
+    </div>
+    <div class="sidebar-widget">
+        <h5>Recent Posts</h5>
+        <article class="media" *ngFor="let item of blogpost | slice:0:4">
+            <a routerLink="/blog-single/{{item.id}}">
+                <img [src]="item.image" alt="{{item.title}}">
+            </a>
+            <div class="media-body">
+                <h6> <a routerLink="/blog-single/{{item.id}}">{{item.title}}</a> </h6>
+                <span>{{item.postdate}}</span>
+            </div>
+        </article>
+    </div>
+    <div class="sidebar-widget tags">
+        <h5>Popular Tags</h5>
+        <a href="#" *ngFor="let tag of blogtags">{{tag.title}}</a>
+    </div>
+</div>

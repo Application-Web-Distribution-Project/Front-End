@@ -1,0 +1,24 @@
+<!-- Icons Start -->
+<div class="container">
+    <div class="section-title-wrap section-header text-center">
+        <h5 class="custom-primary">How We Do It</h5>
+        <h2 class="title">We Deliver Your Food In 4 Steps</h2>
+        <p class="subtitle">
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+            industry's standard dummy text ever since the 1500s
+        </p>
+    </div>
+    <div class="row infographics-2">
+        <div class="col-lg-3 col-md-6 col-sm-6" *ngFor="let item of processpost">
+            <div class="ct-infographic-item">
+                <i class="{{item.icon}}"></i>
+                <h4>{{item.title}}</h4>
+                <p>{{item.text}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="section-btn">
+        <a routerLink="/menu-v1" class="btn-custom">Order Online</a>
+    </div>
+</div>
+<!-- Icons End -->

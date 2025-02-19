@@ -1,0 +1,87 @@
+<!-- Related Start -->
+<div class="section section-padding related-products pt-0">
+    <div class="container">
+        <h3>You might also like</h3>
+        <div class="row">
+            <!-- Product Start -->
+            <div class="col-lg-4 col-md-6" *ngFor="let item of products | slice:0:3">
+                <div class="product">
+                    <a class="product-thumb" routerLink="/menu-item-v1/{{item.id}}"> 
+                        <img [src]="item.img" alt="{{item.name}}" />
+                    </a>
+                    <div class="product-body">
+                        <div class="product-desc">
+                            <h4> <a routerLink="/menu-item-v1/{{item.id}}">{{item.name}}</a> </h4>
+                            <p>{{item.shortdesc}}</p>
+                            <p class="product-price">{{item.price | number:'1.2-2'}}$</p>
+                            <div class="favorite">
+                                <i class="far fa-heart"></i>
+                            </div>
+                        </div>
+                        <div class="product-controls">
+                            <a routerLink="/menu-item-v1/{{item.id}}" class="order-item btn-custom btn-sm shadow-none">Order <i class="fas fa-shopping-cart"></i> </a>
+                            <button type="button" class="btn-custom secondary btn-sm shadow-none"
+                                    (click)="open(shopmodal, item)"> Customize <i class="fas fa-plus"></i> </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Product End -->
+        </div>
+    </div>
+</div>
+<!-- Related End -->
+<ng-template #shopmodal let-modal>
+    <button type="button" class="close-btn" (click)="modal.dismiss('Cross click')">
+        <span></span>
+        <span></span>
+    </button>
+    <div class="modal-header modal-bg" style="background-image: url('{{modalContent.img}}')">
+    </div>
+    <div class="modal-body">
+        <div class="customize-meta">
+            <h4 class="customize-title">{{modalContent.name}} <span class="custom-primary">{{modalContent.price |
+                    number:'1.2-2'}}$</span> </h4>
+            <p>{{modalContent.shortdesc}}</p>
+        </div>
+        <div class="customize-variations">
+            <div class="customize-size-wrapper">
+                <h5>Size: </h5>
+                <div class="customize-size" [ngClass]="item.state == true ? 'active' : ''"
+                    *ngFor="let item of modalContent.sizes">
+                    {{item.size}}"
+                </div>
+            </div>
+            <div class="row">
+                <!-- Variation Start -->
+                <div class="col-lg-4 col-12" *ngFor="let item of modalContent.attributes | slice:0:3">
+                    <div class="customize-variation-wrapper">
+                        <i class="{{item.icon}}"></i>
+                        <h5>{{item.name}}</h5>
+                        <div class="customize-variation-item" *ngFor="let add of item.items">
+                            <div class="custom-control custom-{{item.type}}">
+                                <input type="{{item.type}}" id="{{add.title + 1}}" name="{{item.name}}"
+                                    class="custom-control-input">
+                                <label class="custom-control-label" for="{{add.title + 1}}">{{add.title}}</label>
+                            </div>
+                            <span>+{{add.addprice | number:'1.2-2'}}$</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Variation End -->
+            </div>
+        </div>
+        <div class="customize-controls">
+            <div class="qty">
+                <span class="qty-subtract"><i class="fas fa-minus"></i></span>
+                <input type="text" name="qty" value="1">
+                <span class="qty-add"><i class="fas fa-plus"></i></span>
+            </div>
+            <div class="customize-total">
+                <h5>Total Price: <span class="final-price custom-primary">{{modalContent.price | number:'1.2-2'}}
+                        <span>$</span> </span> </h5>
+            </div>
+        </div>
+        <button type="button" class="btn-custom btn-block">Order Now</button>
+    </div>
+</ng-template>
