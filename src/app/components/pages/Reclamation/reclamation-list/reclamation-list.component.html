@@ -1,0 +1,56 @@
+<div class="container">
+  <div class="section-title-wrap section-header text-center">
+      <h5 class="custom-primary">Mes Réclamations</h5>
+      <button class="btn-custom primary btn-sm shadow-none" (click)="addReclamation()">
+        <i class="fas fa-plus"></i> Ajouter une réclamation
+    </button>
+  </div>
+
+  <!-- ✅ Correction : Appel correct de viewReclamation() avec 2 arguments -->
+  <ngx-slick-carousel [config]="settings" class="product-slider">
+    <div ngxSlickItem class="product" *ngFor="let reclamation of reclamations">
+      <div class="product-body">
+        <div class="product-desc">
+          <h4> 
+            <a (click)="viewReclamation(reclamation, reclamationModal)">
+              {{ reclamation.description }}
+            </a> 
+          </h4>
+          <p>Statut : {{ reclamation.status }}</p>
+        </div>
+        <div class="product-controls">
+          <button type="button" class="btn-custom secondary btn-sm shadow-none" 
+            (click)="viewReclamation(reclamation, reclamationModal)">
+            Détails <i class="fas fa-eye"></i>
+          </button>
+          <button type="button" class="btn-custom btn-sm shadow-none btn-delete" 
+            (click)="deleteReclamation(reclamation.id)">
+            Supprimer <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </ngx-slick-carousel>
+
+  <div class="ct-arrows centered-arrows">
+      <i class="slider-prev fas fa-arrow-left slick-arrow"></i>
+      <i class="slider-next fas fa-arrow-right slick-arrow"></i>
+  </div>
+</div>
+
+<!-- ✅ Modal pour afficher les détails d'une réclamation -->
+<ng-template #reclamationModal let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title">Détails de la Réclamation</h4>
+      <button type="button" class="close" (click)="modal.dismiss('Cross click')">
+          <span>&times;</span>
+      </button>
+  </div>
+  <div class="modal-body">
+      <div class="customize-meta">
+          <h4 class="customize-title">{{ modalContent?.description }}</h4>
+          <p><strong>Statut:</strong> <span class="badge badge-primary">{{ modalContent?.status }}</span></p>
+          <p><strong>Date de création:</strong> {{ modalContent?.dateCreation | date:'dd/MM/yyyy HH:mm' }}</p>
+      </div>
+  </div>
+</ng-template>

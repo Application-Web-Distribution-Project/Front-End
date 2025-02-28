@@ -1,0 +1,38 @@
+<div class="contact-wrapper">
+  <div class="">
+    <div class="section section-padding">
+      <div class="container">
+        <div class="section-title-wrap">
+          <h2 class="title">Créer une Réclamation</h2>
+          <p class="subtitle">
+            Sélectionnez une commande et décrivez votre problème.
+          </p>
+        </div>
+
+        <form (ngSubmit)="onSubmit()">
+          <div class="row">
+            <!-- ✅ Sélectionner une commande existante -->
+            <div class="form-group col-lg-12">
+              <label>Commande</label>
+              <select [(ngModel)]="reclamation.commandeId" name="commandeId" class="form-control" required>
+                <option *ngFor="let cmd of commandes" [value]="cmd.id">
+                  {{ cmd.reference }} - {{ cmd.montant }} €
+                </option>
+              </select>
+            </div>
+
+            <!-- ✅ Champ Description -->
+            <div class="form-group col-lg-12">
+              <label>Description</label>
+              <input type="text" [(ngModel)]="reclamation.description" name="description" class="form-control" required>
+            </div>
+
+    
+          </div>
+
+          <button type="submit" class="btn-custom primary">Envoyer la Réclamation</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

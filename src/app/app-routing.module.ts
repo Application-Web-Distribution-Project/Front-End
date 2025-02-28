@@ -23,6 +23,16 @@ const routes: Routes = [
   { path: 'menu-item-v2/:id', loadChildren: () => import('./components/pages/menuitemtwo/menuitemtwo.module').then(m => m.MenuitemtwoModule), data: { breadcrumb: 'Menu Item v2' } },
   { path: 'locations', loadChildren: () => import('./components/pages/locations/locations.module').then(m => m.LocationsModule), data: { breadcrumb: 'Locations' } },
   { path: 'contact', loadChildren: () => import('./components/pages/contact/contact.module').then(m => m.ContactModule), data: { breadcrumb: 'Contact Us' } },
+
+
+ { 
+  path: 'reclamations', 
+  loadChildren: () => import('./components/pages/Reclamation/reclamation.module').then(m => m.ReclamationModule), 
+  data: { breadcrumb: 'Réclamations' } 
+}
+,
+
+  { path: '', redirectTo: '/reclamations', pathMatch: 'full' },
   { path: 'error', loadChildren: () => import('./components/pages/error/error.module').then(m => m.ErrorModule), data: { breadcrumb: 'Error 404' } },
   { path: '**', loadChildren: () => import('./components/pages/error/error.module').then(m => m.ErrorModule), data: { breadcrumb: 'Error 404' } }
 ];
