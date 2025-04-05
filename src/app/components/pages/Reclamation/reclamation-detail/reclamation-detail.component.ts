@@ -13,7 +13,7 @@ export class ReclamationDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private reclamationService: ReclamationService
+    public reclamationService: ReclamationService  // Changed from private to public
   ) {}
 
   ngOnInit(): void {
@@ -28,5 +28,23 @@ export class ReclamationDetailComponent implements OnInit {
         }
       });
     }
+  }
+
+  updateStatus(newStatus: string): void {
+    if (!this.reclamation) return;
+
+    const comment = prompt('Ajouter un commentaire (optionnel):');
+    
+    this.reclamationService.updateReclamationStatus(this.reclamation.id, newStatus, comment || '')
+      .subscribe({
+        next: (updated) => {
+          this.reclamation = updated;
+          alert('Statut mis à jour avec succès!');
+        },
+        error: (error) => {
+          console.error('Erreur mise à jour statut:', error);
+          alert('Erreur lors de la mise à jour du statut');
+        }
+      });
   }
 }

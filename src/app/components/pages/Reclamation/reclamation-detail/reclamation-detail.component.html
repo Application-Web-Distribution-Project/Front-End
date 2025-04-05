@@ -1,8 +1,33 @@
 <app-header></app-header>  <!-- Inclusion du header global -->
 
-<p>Description : {{ reclamation?.description }}</p>
-<p>Statut : {{ reclamation?.status }}</p>
+<div class="container mt-4" *ngIf="reclamation">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h4>Détails de la réclamation #{{ reclamation.id }}</h4>
+      <span [class]="reclamationService.getStatusBadgeClass(reclamation.status)">
+        {{ reclamationService.getStatusLabel(reclamation.status) }}
+      </span>
+    </div>
+    <div class="card-body">
+      <p class="lead">{{ reclamation.description }}</p>
+      
+      <div class="mt-4">
+        <h5>Modifier le statut</h5>
+        <div class="btn-group">
+          <button class="btn btn-warning" (click)="updateStatus('EN_ATTENTE')" [disabled]="reclamation.status === 'EN_ATTENTE'">
+            En attente
+          </button>
+          <button class="btn btn-info" (click)="updateStatus('EN_COURS')" [disabled]="reclamation.status === 'EN_COURS'">
+            En cours
+          </button>
+          <button class="btn btn-success" (click)="updateStatus('RESOLU')" [disabled]="reclamation.status === 'RESOLU'">
+            Résolu
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-<a routerLink="/reclamations">Retour</a>
+<a routerLink="/reclamations" class="btn-custom primary">Retour</a>
 <app-footer></app-footer>  <!-- Inclusion du footer global -->
-

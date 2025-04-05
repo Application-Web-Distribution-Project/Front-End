@@ -1,39 +1,33 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 import { ReclamationListComponent } from './reclamation-list/reclamation-list.component';
 import { ReclamationFormComponent } from './reclamation-form/reclamation-form.component';
 import { ReclamationDetailComponent } from './reclamation-detail/reclamation-detail.component';
+import { ReclamationStatsComponent } from './reclamation-stats/reclamation-stats.component';
 import { SharedModule } from '../../shared/shared.module';
-import { ReclamationRoutingModule } from './reclamation-routing.module';
-import { SlickCarouselModule } from 'ngx-slick-carousel';
 
-
-
-
+const routes: Routes = [
+  { path: '', component: ReclamationListComponent },
+  { path: 'new', component: ReclamationFormComponent },
+  { path: 'stats', component: ReclamationStatsComponent },
+  { path: ':id', component: ReclamationDetailComponent }
+];
 
 @NgModule({
   declarations: [
     ReclamationListComponent,
     ReclamationFormComponent,
     ReclamationDetailComponent,
-
-
+    ReclamationStatsComponent
   ],
   imports: [
     CommonModule,
     SharedModule,
     FormsModule,
-    RouterModule,
-    ReclamationRoutingModule,
-    SlickCarouselModule //
-],
-  exports: [
-    ReclamationListComponent,
-    ReclamationFormComponent,
-    ReclamationDetailComponent
+    RouterModule.forChild(routes)
   ]
 })
 export class ReclamationModule { }

@@ -1,38 +1,39 @@
-<div class="contact-wrapper">
-  <div class="">
-    <div class="section section-padding">
-      <div class="container">
-        <div class="section-title-wrap">
-          <h2 class="title">Créer une Réclamation</h2>
-          <p class="subtitle">
-            Sélectionnez une commande et décrivez votre problème.
-          </p>
+<div class="container mt-4">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h3 class="mb-0"><i class="fas fa-edit"></i> Nouvelle Réclamation</h3>
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="onSubmit()" #reclamationForm="ngForm" class="needs-validation">
+        <div class="mb-4">
+          <label class="form-label">Commande associée</label>
+          <select [(ngModel)]="reclamation.commandeId" name="commandeId" 
+                  class="form-select" required>
+            <option value="" disabled>Sélectionnez une commande</option>
+            <option *ngFor="let cmd of commandes" [value]="cmd.id">
+              Commande #{{ cmd.reference }} - {{ cmd.montant }}€
+            </option>
+          </select>
         </div>
 
-        <form (ngSubmit)="onSubmit()">
-          <div class="row">
-            <!-- ✅ Sélectionner une commande existante -->
-            <div class="form-group col-lg-12">
-              <label>Commande</label>
-              <select [(ngModel)]="reclamation.commandeId" name="commandeId" class="form-control" required>
-                <option *ngFor="let cmd of commandes" [value]="cmd.id">
-                  {{ cmd.reference }} - {{ cmd.montant }} €
-                </option>
-              </select>
-            </div>
+        <div class="mb-4">
+          <label class="form-label">Description du problème</label>
+          <textarea [(ngModel)]="reclamation.description" name="description" 
+                    class="form-control" rows="4" required
+                    placeholder="Décrivez votre problème en détail..."></textarea>
+        </div>
 
-            <!-- ✅ Champ Description -->
-            <div class="form-group col-lg-12">
-              <label>Description</label>
-              <input type="text" [(ngModel)]="reclamation.description" name="description" class="form-control" required>
-            </div>
-
-    
-          </div>
-
-          <button type="submit" class="btn-custom primary">Envoyer la Réclamation</button>
-        </form>
-      </div>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary" 
+                  [disabled]="!reclamationForm.form.valid">
+            <i class="fas fa-paper-plane"></i> Envoyer
+          </button>
+          <button type="button" class="btn btn-outline-secondary" 
+                  routerLink="/reclamations">
+            <i class="fas fa-times"></i> Annuler
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

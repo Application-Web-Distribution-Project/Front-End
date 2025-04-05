@@ -3,6 +3,8 @@ import { ReclamationService } from 'src/app/services/reclamation.service';
 import { Reclamation } from 'src/app/models/reclamation.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router'; // ✅ Ajout du Router pour la navigation
+import { catchError } from 'rxjs/operators';
+import { EMPTY } from 'rxjs';
 
 @Component({
   selector: 'app-reclamation-list',
@@ -57,11 +59,12 @@ export class ReclamationListComponent implements OnInit {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette réclamation ?')) {
       this.reclamationService.deleteReclamation(id).subscribe({
         next: () => {
+          console.log('✅ Réclamation supprimée avec succès');
           this.reclamations = this.reclamations.filter(r => r.id !== id);
         },
         error: (error) => {
-          console.error('❌ Erreur lors de la suppression :', error);
-          alert('Impossible de supprimer la réclamation. Veuillez réessayer.');
+          console.error('Delete failed:', error);
+          alert('La suppression a échoué. Veuillez réessayer.');
         }
       });
     }
@@ -80,5 +83,34 @@ export class ReclamationListComponent implements OnInit {
   // ✅ Ajouter une nouvelle réclamation (redirection)
   addReclamation(): void {
     this.router.navigate(['/reclamations/new']);
+  }
+
+  // Add utility methods
+  getStatusBadgeClass(status: string): string {
+    return this.reclamationService.getStatusBadgeClass(status);
+  }
+
+  getStatusLabel(status: string): string {
+    return this.reclamationService.getStatusLabel(status);
+  }
+
+  formatDate(date: string): string {
+    return this.reclamationService.formatDate(date);
+  }
+
+  updateStatus(id: number, newStatus: string): void {
+    const comment = prompt('Ajouter un commentaire (optionnel):');
+    
+    this.reclamationService.updateReclamationStatus(id, newStatus, comment || '')
+      .subscribe({
+        next: () => {
+          alert('Statut mis à jour avec succès!');
+          this.loadReclamations(); // Recharge la liste
+        },
+        error: (error) => {
+          console.error('Erreur mise à jour statut:', error);
+          alert('Erreur lors de la mise à jour du statut');
+        }
+      });
   }
 }
