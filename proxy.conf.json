@@ -1,0 +1,8 @@
+{
+  "/reclamations": {
+    "target": "http://api-gateway:8081",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

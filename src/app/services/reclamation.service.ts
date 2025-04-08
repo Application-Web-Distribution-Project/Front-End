@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, retry, timeout, map } from 'rxjs/operators';
 import { Reclamation } from '../models/reclamation.model';
@@ -8,9 +8,9 @@ import { Reclamation } from '../models/reclamation.model';
   providedIn: 'root'
 })
 export class ReclamationService {
-  private apiUrl = 'http://localhost:8082/reclamations';
+  private apiUrl: string;
   private readonly TIMEOUT = 10000;
-  private readonly RETRY_ATTEMPTS = 1;
+  private readonly RETRY_ATTEMPTS = 2;
 
   private httpOptions = {
     headers: new HttpHeaders({
@@ -19,18 +19,17 @@ export class ReclamationService {
     })
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    // Use relative URL to work with proxy
+    this.apiUrl = '/reclamations';
+  }
 
   getAllReclamations(): Observable<Reclamation[]> {
     console.log('🔄 Fetching reclamations from:', this.apiUrl);
-    return this.http.get<Reclamation[]>(this.apiUrl, {
-      headers: this.httpOptions.headers
-    }).pipe(
+    return this.http.get<Reclamation[]>(this.apiUrl, this.httpOptions).pipe(
       timeout(this.TIMEOUT),
-      catchError((error: HttpErrorResponse) => {
-        console.error('🔴 Error details:', error);
-        return throwError(() => error);
-      })
+      retry(this.RETRY_ATTEMPTS),
+      catchError(this.handleError.bind(this))
     );
   }
 
@@ -79,10 +78,19 @@ export class ReclamationService {
 
   updateReclamationStatus(id: number, newStatus: string, comment: string): Observable<Reclamation> {
     const url = `${this.apiUrl}/${id}/status`;
-    const payload = { newStatus, comment };
-    return this.http.put<Reclamation>(url, payload, this.httpOptions).pipe(
+    const params = new HttpParams()
+      .set('newStatus', newStatus)
+      .set('comment', comment || '');
+
+    return this.http.put<Reclamation>(url, null, { 
+      headers: this.httpOptions.headers,
+      params: params 
+    }).pipe(
       timeout(this.TIMEOUT),
-      catchError(this.handleError)
+      catchError(error => {
+        console.error('Status update error:', error);
+        return this.handleError(error);
+      })
     );
   }
 

@@ -101,15 +101,18 @@ export class ReclamationListComponent implements OnInit {
   updateStatus(id: number, newStatus: string): void {
     const comment = prompt('Ajouter un commentaire (optionnel):');
     
+    console.log(`Updating status: ID=${id}, newStatus=${newStatus}, comment=${comment}`);
+    
     this.reclamationService.updateReclamationStatus(id, newStatus, comment || '')
       .subscribe({
-        next: () => {
+        next: (updated) => {
+          console.log('Status updated successfully:', updated);
           alert('Statut mis à jour avec succès!');
-          this.loadReclamations(); // Recharge la liste
+          this.loadReclamations();
         },
         error: (error) => {
-          console.error('Erreur mise à jour statut:', error);
-          alert('Erreur lors de la mise à jour du statut');
+          console.error('Status update error:', error);
+          alert('Erreur lors de la mise à jour du statut: ' + error.message);
         }
       });
   }

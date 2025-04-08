@@ -1,20 +1,22 @@
-# Utiliser Node.js 14 (version alpine pour un conteneur plus léger)
-FROM node:14-alpine
+FROM node:14.17.0-alpine as builder
 
-# Définir le répertoire de travail
 WORKDIR /app
 
-# Copier uniquement package.json et package-lock.json pour installer les dépendances en premier
-COPY package.json package-lock.json ./
+# Install build dependencies
+RUN apk add --no-cache python3 make g++
 
-# Nettoyer le cache et installer les dépendances avec --legacy-peer-deps
-RUN npm cache clean --force && npm install --legacy-peer-deps
+# Copy package files
+COPY package*.json ./
 
-# Copier le reste des fichiers de l'application
+# Install dependencies with specific settings
+RUN npm cache clean --force && \
+    npm install --legacy-peer-deps
+
+# Copy project files
 COPY . .
 
-# Exposer le port 4200
-EXPOSE 4200
+# Configure environment
+ENV NODE_OPTIONS=--max_old_space_size=4096
 
-# Lancer l'application avec binding réseau pour l'accès externe
-CMD ["npm", "run", "start", "--", "--host", "0.0.0.0"]
+# Start development server with proper configuration
+CMD ["npm", "run", "start", "--", "--host", "0.0.0.0", "--disable-host-check", "--poll", "2000", "--source-map=false", "--proxy-config", "proxy.conf.json"]
