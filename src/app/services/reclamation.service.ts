@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable, throwError, TimeoutError } from 'rxjs';
-import { catchError, retry, timeout, map } from 'rxjs/operators';
+import { Observable, throwError, TimeoutError, of } from 'rxjs';
+import { catchError, retry, timeout, map, debounceTime } from 'rxjs/operators';
 import { Reclamation } from '../models/reclamation.model';
 
 @Injectable({
@@ -9,8 +9,8 @@ import { Reclamation } from '../models/reclamation.model';
 })
 export class ReclamationService {
   private apiUrl: string;
-  private readonly TIMEOUT = 10000;
-  private readonly RETRY_ATTEMPTS = 2;
+  private readonly TIMEOUT = 15000; // Increased timeout for Docker network
+  private readonly RETRY_ATTEMPTS = 3; // Increased retries
 
   private httpOptions = {
     headers: new HttpHeaders({
@@ -33,10 +33,30 @@ export class ReclamationService {
     );
   }
 
+  searchReclamations(query: string): Observable<Reclamation[]> {
+    console.log('🔍 Searching reclamations with query:', query);
+    if (!query.trim()) {
+      // Si la requête est vide, retourner toutes les réclamations
+      return this.getAllReclamations();
+    }
+    
+    // Créer les paramètres de recherche
+    const params = new HttpParams().set('query', query);
+    
+    // Solution alternative est de rechercher côté client:
+    return this.getAllReclamations().pipe(
+      map(reclamations => {
+        const lowercaseQuery = query.toLowerCase();
+        return reclamations.filter(reclamation => 
+          (reclamation.description?.toLowerCase().includes(lowercaseQuery)) ||
+          (reclamation.status?.toLowerCase().includes(lowercaseQuery))
+        );
+      })
+    );
+  }
+
   getReclamationById(id: number): Observable<Reclamation> {
-    return this.http.get<Reclamation>(`${this.apiUrl}/${id}`, {
-      headers: this.httpOptions.headers
-    }).pipe(
+    return this.http.get<Reclamation>(`${this.apiUrl}/${id}`, this.httpOptions).pipe(
       timeout(this.TIMEOUT),
       retry(this.RETRY_ATTEMPTS),
       catchError(this.handleError)
@@ -45,15 +65,13 @@ export class ReclamationService {
 
   createReclamation(reclamation: Reclamation): Observable<Reclamation> {
     console.log('📝 Creating reclamation:', reclamation);
+    
     const payload = {
       ...reclamation,
-      dateCreation: new Date().toISOString(),
-      commandeId: Number(reclamation.commandeId)
+      dateCreation: new Date().toISOString()
     };
 
-    return this.http.post<Reclamation>(this.apiUrl, payload, {
-      headers: this.httpOptions.headers
-    }).pipe(
+    return this.http.post<Reclamation>(this.apiUrl, payload, this.httpOptions).pipe(
       timeout(this.TIMEOUT),
       catchError(error => {
         console.error('Creation error details:', error);
@@ -64,7 +82,10 @@ export class ReclamationService {
 
   deleteReclamation(id: number): Observable<void> {
     console.log(`🗑️ Attempting to delete reclamation ${id}`);
-    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+    return this.http.delete(`${this.apiUrl}/${id}`, {
+      headers: this.httpOptions.headers,
+      responseType: 'text'
+    }).pipe(
       map(() => {
         console.log('✅ Delete successful');
         return;
@@ -84,7 +105,7 @@ export class ReclamationService {
 
     return this.http.put<Reclamation>(url, null, { 
       headers: this.httpOptions.headers,
-      params: params 
+      params: params
     }).pipe(
       timeout(this.TIMEOUT),
       catchError(error => {
@@ -116,12 +137,19 @@ export class ReclamationService {
   getStatusLabel(status: string): string {
     if (!status) return 'Inconnu';
 
-    switch (status.toUpperCase()) {
-      case 'EN_ATTENTE': return '⏳ En attente';
-      case 'EN_COURS': return '🔄 En cours';
-      case 'RESOLUE': return '✅ Résolue';
-      case 'REJETEE': return '❌ Rejetée';
-      default: return status;
+    try {
+      switch (status.toUpperCase()) {
+        case 'EN_ATTENTE': return '⏳ En attente';
+        case 'EN_COURS': return '🔄 En cours';
+        case 'RESOLUE': 
+        case 'RESOLU': return '✅ Résolue';
+        case 'REJETEE': 
+        case 'REJETE': return '❌ Rejetée';
+        default: return status;
+      }
+    } catch (error) {
+      console.error('Error in getStatusLabel:', error);
+      return 'Inconnu';
     }
   }
 

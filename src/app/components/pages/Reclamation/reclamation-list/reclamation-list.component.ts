@@ -1,21 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ReclamationService } from 'src/app/services/reclamation.service';
 import { Reclamation } from 'src/app/models/reclamation.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Router } from '@angular/router'; // ✅ Ajout du Router pour la navigation
-import { catchError } from 'rxjs/operators';
-import { EMPTY } from 'rxjs';
+import { Router } from '@angular/router';
+import { catchError, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { EMPTY, Subject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-reclamation-list',
   templateUrl: './reclamation-list.component.html',
   styleUrls: ['./reclamation-list.component.css']
 })
-export class ReclamationListComponent implements OnInit {
+export class ReclamationListComponent implements OnInit, OnDestroy {
   reclamations: Reclamation[] = [];
   isLoading: boolean = true;
   errorMessage: string = '';
-  modalContent: Reclamation | null = null; //
+  modalContent: Reclamation | null = null;
+  
+  // Propriétés pour la recherche
+  searchQuery: string = '';
+  private searchTerms = new Subject<string>();
+  private searchSubscription: Subscription | null = null;
+  allReclamations: Reclamation[] = []; // Stocke toutes les réclamations pour la recherche côté client
+
+  // Properties for footer styling
+  classname = "footer-dark";
+  ftlogo = "assets/img/logo.png";
 
   settings = {
     slidesToShow: 3,
@@ -31,11 +41,41 @@ export class ReclamationListComponent implements OnInit {
   constructor(
     private reclamationService: ReclamationService,
     private modalService: NgbModal,
-    private router: Router //
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.loadReclamations();
+    
+    // Configuration de la recherche avec debounce pour éviter trop d'appels API
+    this.searchSubscription = this.searchTerms.pipe(
+      debounceTime(300), // Attend 300ms après chaque frappe
+      distinctUntilChanged(), // Ignore si le terme de recherche est le même
+      switchMap(term => {
+        this.isLoading = true;
+        return this.reclamationService.searchReclamations(term);
+      }),
+      catchError(error => {
+        this.errorMessage = 'Erreur lors de la recherche: ' + error.message;
+        this.isLoading = false;
+        return EMPTY;
+      })
+    ).subscribe(results => {
+      this.reclamations = results;
+      this.isLoading = false;
+    });
+  }
+  
+  ngOnDestroy(): void {
+    // Nettoyage des abonnements pour éviter les fuites de mémoire
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
+  }
+
+  // Méthode appelée à chaque frappe dans le champ de recherche
+  search(term: string): void {
+    this.searchTerms.next(term);
   }
 
   // ✅ Charger la liste des réclamations
@@ -44,6 +84,7 @@ export class ReclamationListComponent implements OnInit {
     this.reclamationService.getAllReclamations().subscribe({
       next: (data) => {
         this.reclamations = data;
+        this.allReclamations = data; // Sauvegarde de toutes les réclamations
         this.isLoading = false;
       },
       error: (error) => {
@@ -76,8 +117,21 @@ export class ReclamationListComponent implements OnInit {
       console.error('Réclamation invalide');
       return;
     }
-    this.modalContent = reclamation;
-    this.modalService.open(content, { size: 'lg' });
+
+    // D'abord, récupérer les détails complets de la réclamation
+    this.reclamationService.getReclamationById(reclamation.id).subscribe({
+      next: (fullDetails) => {
+        console.log('✅ Détails complets récupérés:', fullDetails);
+        this.modalContent = fullDetails; 
+        this.modalService.open(content, { size: 'lg' });
+      },
+      error: (error) => {
+        console.error('❌ Erreur lors de la récupération des détails:', error);
+        // En cas d'erreur, utiliser les données de base disponibles
+        this.modalContent = reclamation;
+        this.modalService.open(content, { size: 'lg' });
+      }
+    });
   }
 
   // ✅ Ajouter une nouvelle réclamation (redirection)
@@ -115,5 +169,31 @@ export class ReclamationListComponent implements OnInit {
           alert('Erreur lors de la mise à jour du statut: ' + error.message);
         }
       });
+  }
+
+  // Nouvelle méthode pour obtenir la classe CSS de l'indicateur de statut
+  getStatusClass(status: string): string {
+    if (!status) return '';
+    
+    switch (status.toUpperCase()) {
+      case 'EN_ATTENTE': return 'status-en-attente';
+      case 'EN_COURS': return 'status-en-cours';
+      case 'RESOLU': return 'status-resolu';
+      case 'REJETEE': return 'status-rejete';
+      default: return '';
+    }
+  }
+
+  // Méthode pour récupérer la classe CSS appropriée pour le statut de la commande
+  getCommandeStatusClass(status: string | undefined): string {
+    if (!status) return 'secondary';
+    
+    switch (status.toUpperCase()) {
+      case 'EN_ATTENTE': return 'warning';
+      case 'EN_COURS': return 'info';
+      case 'LIVREE': return 'success';
+      case 'ANNULEE': return 'danger';
+      default: return 'secondary';
+    }
   }
 }

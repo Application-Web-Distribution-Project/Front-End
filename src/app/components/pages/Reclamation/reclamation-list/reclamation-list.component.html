@@ -1,46 +1,98 @@
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="text-primary"><i class="fas fa-clipboard-list"></i> Mes Réclamations</h3>
-    <div>
-      <button class="btn btn-info me-2" routerLink="stats">
-        <i class="fas fa-chart-bar"></i> Statistiques
-      </button>
-      <button class="btn btn-primary" (click)="addReclamation()">
-        <i class="fas fa-plus"></i> Nouvelle réclamation
-      </button>
+<app-headerthree></app-headerthree>
+<!-- Reclamation List Start -->
+<div class="section section-padding reclamation-wrapper">
+  <div class="container">
+    <div class="section-title-wrap text-center mb-5">
+      <h2 class="title text-primary">
+        <i class="fas fa-clipboard-list"></i> Mes Réclamations
+      </h2>
+      <p class="subtitle">Suivez et gérez vos réclamations en temps réel</p>
     </div>
-  </div>
 
-  <div class="row">
-    <div class="col-md-4 mb-4" *ngFor="let reclamation of reclamations">
-      <div class="card h-100 shadow-sm">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-start">
-            <h5 class="card-title text-truncate mb-3">{{ reclamation.description }}</h5>
-            <span [class]="getStatusBadgeClass(reclamation.status)">
-              {{ getStatusLabel(reclamation.status) }}
-            </span>
+    <!-- Barre de recherche AJAX -->
+    <div class="search-container mb-5">
+      <div class="input-group">
+        <span class="input-group-text bg-light">
+          <i class="fas fa-search"></i>
+        </span>
+        <input 
+          type="text" 
+          class="form-control search-input" 
+          placeholder="Rechercher une réclamation..." 
+          [(ngModel)]="searchQuery"
+          (keyup)="search(searchQuery)"
+          aria-label="Recherche"
+        >
+        <button 
+          *ngIf="searchQuery" 
+          class="btn btn-outline-secondary clear-btn" 
+          type="button"
+          (click)="searchQuery = ''; search('')">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="reclamation-actions mb-4">
+      <div class="d-flex justify-content-end">
+        <button class="btn-custom" routerLink="stats">
+          <i class="fas fa-chart-bar"></i> Statistiques
+        </button>
+        <button class="btn-custom" (click)="addReclamation()">
+          <i class="fas fa-plus"></i> Nouvelle réclamation
+        </button>
+        
+      </div>
+    </div>
+
+    <!-- Indicateur de chargement -->
+    <div *ngIf="isLoading" class="text-center my-5 loading-animation">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+      <p class="mt-2">Recherche en cours...</p>
+    </div>
+
+    <!-- Message d'erreur -->
+    <div *ngIf="errorMessage && !isLoading" class="alert alert-danger fade-in">
+      <i class="fas fa-exclamation-circle me-2"></i>{{ errorMessage }}
+    </div>
+
+    <!-- Message aucun résultat -->
+    <div *ngIf="reclamations.length === 0 && !isLoading && !errorMessage" class="alert alert-info fade-in">
+      <i class="fas fa-info-circle me-2"></i> Aucune réclamation trouvée.
+    </div>
+
+    <div class="row reclamation-grid">
+      <div class="col-lg-4 col-md-6 mb-4 reclamation-item" *ngFor="let reclamation of reclamations">
+        <div class="card h-100 reclamation-card">
+          <div class="status-indicator" [ngClass]="getStatusClass(reclamation.status)"></div>
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <h5 class="card-title text-truncate mb-3">{{ reclamation.description }}</h5>
+              <span [class]="getStatusBadgeClass(reclamation.status)">
+                {{ getStatusLabel(reclamation.status) }}
+              </span>
+            </div>
+            <p class="card-text">
+              <small class="text-muted">
+                <i class="far fa-calendar-alt"></i> 
+                {{ formatDate(reclamation.dateCreation) }}
+              </small>
+            </p>
           </div>
-          <p class="card-text">
-            <small class="text-muted">
-              <i class="far fa-calendar-alt"></i> 
-              {{ formatDate(reclamation.dateCreation) }}
-            </small>
-          </p>
-        </div>
-        <div class="card-footer bg-transparent">
-          <div class="d-flex justify-content-between">
-            <button class="btn btn-outline-primary btn-sm" (click)="viewReclamation(reclamation, reclamationModal)">
-              <i class="fas fa-eye"></i> Détails
-            </button>
-            <div class="btn-group">
-              <button class="btn btn-outline-warning btn-sm" (click)="updateStatus(reclamation.id, 'EN_COURS')">
-                <i class="fas fa-clock"></i> En cours
+          <div class="card-footer bg-transparent">
+            <div class="action-button-container">
+              <button class="action-btn details-btn" (click)="viewReclamation(reclamation, reclamationModal)">
+                <i class="fas fa-eye"></i> DÉTAILS
               </button>
-              <button class="btn btn-outline-success btn-sm" (click)="updateStatus(reclamation.id, 'RESOLU')">
-                <i class="fas fa-check"></i> Résolu
+              <button class="action-btn progress-btn" (click)="updateStatus(reclamation.id, 'EN_COURS')">
+                <i class="fas fa-clock"></i> EN COURS
               </button>
-              <button class="btn btn-outline-danger btn-sm" (click)="deleteReclamation(reclamation.id)">
+              <button class="action-btn resolve-btn" (click)="updateStatus(reclamation.id, 'RESOLU')">
+                <i class="fas fa-check"></i> RÉSOLU
+              </button>
+              <button class="action-btn delete-btn" (click)="deleteReclamation(reclamation.id)">
                 <i class="fas fa-trash"></i>
               </button>
             </div>
@@ -50,34 +102,76 @@
     </div>
   </div>
 </div>
+<!-- Reclamation List End -->
 
+<!-- Modal amélioré avec une meilleure structure et présentation -->
 <ng-template #reclamationModal let-modal>
-  <div class="modal-header bg-light">
-    <h4 class="modal-title"><i class="fas fa-info-circle"></i> Détails de la Réclamation</h4>
-    <button class="btn-close" (click)="modal.dismiss()"></button>
+  <div class="modal-header custom-modal-header">
+    <h4 class="modal-title"><i class="fas fa-info-circle"></i> Détails de la Réclamation #{{ modalContent?.id }}</h4>
+    <button class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
   </div>
-  <div class="modal-body">
-    <div class="p-3">
-      <div class="mb-3">
-        <label class="text-muted">Description</label>
-        <p class="lead">{{ modalContent?.description }}</p>
+  <div class="modal-body custom-modal-body">
+    <div class="reclamation-detail-content">
+      <!-- Section Description -->
+      <div class="mb-4">
+        <label class="label-heading">Description</label>
+        <p class="lead description-text">{{ modalContent?.description }}</p>
       </div>
+      
+      <!-- Section Détails de la Commande -->
+      <div class="mb-4" *ngIf="modalContent?.commande">
+        <label class="label-heading">Détails de la Commande</label>
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <p><strong><i class="fas fa-hashtag"></i> ID:</strong> {{ modalContent.commande.id }}</p>
+                <p><strong><i class="far fa-calendar-alt"></i> Date:</strong> {{ formatDate(modalContent.commande.dateCommande) }}</p>
+              </div>
+              <div class="col-md-6">
+                <p><strong><i class="fas fa-info-circle"></i> Statut:</strong> 
+                  <span class="badge" [ngClass]="'bg-' + getCommandeStatusClass(modalContent.commande.status || 'secondary')">
+                    {{ modalContent.commande.status || 'Non défini' }}
+                  </span>
+                </p>
+                <p><strong><i class="fas fa-user"></i> Utilisateur:</strong> {{ modalContent.commande.userId }}</p>
+              </div>
+            </div>
+            <div *ngIf="modalContent.commande.menuIds && modalContent.commande.menuIds.length > 0" class="mt-3">
+              <p><strong><i class="fas fa-utensils"></i> Menus commandés:</strong></p>
+              <ul class="list-group">
+                <li class="list-group-item" *ngFor="let menuId of modalContent.commande.menuIds">
+                  <i class="fas fa-check-circle text-success me-2"></i> {{ menuId }}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Section Statut & Dates -->
       <div class="row">
-        <div class="col-md-6">
-          <label class="text-muted">Statut</label>
-          <p><span [class]="getStatusBadgeClass(modalContent?.status)">
+        <div class="col-md-6 mb-3">
+          <label class="label-heading">Statut</label>
+          <p><span [class]="getStatusBadgeClass(modalContent?.status)" class="status-badge-lg">
             {{ getStatusLabel(modalContent?.status) }}
           </span></p>
         </div>
-        <div class="col-md-6">
-          <label class="text-muted">Créée le</label>
-          <p>{{ formatDate(modalContent?.dateCreation) }}</p>
+        <div class="col-md-6 mb-3">
+          <label class="label-heading">Créée le</label>
+          <p class="date-text"><i class="far fa-calendar-alt"></i>{{ formatDate(modalContent?.dateCreation) }}</p>
         </div>
       </div>
-      <div *ngIf="modalContent?.dateResolution" class="mt-3">
-        <label class="text-muted">Résolue le</label>
-        <p>{{ formatDate(modalContent?.dateResolution) }}</p>
+      
+      <div *ngIf="modalContent?.dateResolution" class="mt-2">
+        <label class="label-heading">Résolue le</label>
+        <p class="date-text"><i class="fas fa-check-circle text-success"></i>{{ formatDate(modalContent?.dateResolution) }}</p>
       </div>
     </div>
   </div>
+  <div class="modal-footer custom-modal-footer">
+    <button type="button" class="btn-custom" (click)="modal.dismiss()">Fermer</button>
+  </div>
 </ng-template>
+
+<app-footer [layout]="'footer-dark'" [logo]="'assets/img/logo.png'"></app-footer>

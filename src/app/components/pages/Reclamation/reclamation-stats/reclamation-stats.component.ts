@@ -1,6 +1,8 @@
 import { Component, OnInit, ElementRef, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { ReclamationService } from 'src/app/services/reclamation.service';
 import { Chart, registerables } from 'chart.js';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 Chart.register(...registerables);
 
@@ -10,6 +12,10 @@ Chart.register(...registerables);
   styleUrls: ['./reclamation-stats.component.css']
 })
 export class ReclamationStatsComponent implements AfterViewInit {
+  // Properties for footer styling
+  classname = "footer-dark";
+  ftlogo = "assets/img/logo.png";
+  
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   
   loading = false;
@@ -67,6 +73,108 @@ export class ReclamationStatsComponent implements AfterViewInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  /**
+   * Exporte les statistiques des réclamations au format PDF
+   * Crée un document PDF professionnel avec un tableau des données, 
+   * le graphique et des informations complémentaires
+   */
+  exportToPDF(): void {
+    if (!this.statsData || !this.chartCanvas) {
+      alert('Aucune donnée disponible pour l\'exportation');
+      return;
+    }
+
+    // Création d'un nouveau document PDF au format A4
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = pdf.internal.pageSize.width;
+    let currentY = 20; // Position verticale initiale
+
+    // Ajouter un en-tête au document
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(20);
+    pdf.setTextColor(44, 62, 80);
+    pdf.text('Rapport des Réclamations', pageWidth / 2, currentY, { align: 'center' });
+    
+    // Ajouter la date du rapport
+    currentY += 10;
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(12);
+    pdf.setTextColor(100, 100, 100);
+    const dateStr = new Date().toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    pdf.text(`Généré le ${dateStr}`, pageWidth / 2, currentY, { align: 'center' });
+
+    // Ajouter une description
+    currentY += 15;
+    pdf.setFontSize(11);
+    pdf.setTextColor(60, 60, 60);
+    pdf.text('Ce rapport présente la répartition des réclamations par statut.', 20, currentY);
+
+    // Ajouter un tableau des statistiques
+    currentY += 15;
+    const tableData = this.statsData.labels.map((label, index) => {
+      return [label, this.statsData!.values[index].toString()];
+    });
+
+    autoTable(pdf, {
+      startY: currentY,
+      head: [['Statut', 'Nombre de réclamations']],
+      body: tableData,
+      headStyles: {
+        fillColor: [255, 126, 0], // Couleur orange pour l'en-tête
+        textColor: 255,
+        fontStyle: 'bold',
+        halign: 'center'
+      },
+      alternateRowStyles: {
+        fillColor: [240, 240, 240]
+      },
+      styles: {
+        fontSize: 11,
+        cellPadding: 5
+      }
+    });
+
+    // Mettre à jour la position Y après le tableau
+    currentY = (pdf as any).lastAutoTable.finalY + 20;
+
+    // Ajouter le graphique
+    const canvas = this.chartCanvas.nativeElement;
+    const chartImage = canvas.toDataURL('image/png', 1.0);
+    
+    pdf.setFontSize(14);
+    pdf.setTextColor(44, 62, 80);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Graphique de répartition', pageWidth / 2, currentY, { align: 'center' });
+    
+    // Ajouter l'image du graphique
+    currentY += 10;
+    const imgWidth = 160; // Largeur de l'image dans le PDF
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    pdf.addImage(chartImage, 'PNG', (pageWidth - imgWidth) / 2, currentY, imgWidth, imgHeight);
+
+    // Ajouter un pied de page
+    // Utiliser une alternative à getNumberOfPages() pour éviter l'erreur TypeScript
+    const pageCount = pdf.internal.pages.length - 1; // -1 car l'index commence à 0
+    pdf.setFont('helvetica', 'italic');
+    pdf.setFontSize(10);
+    pdf.setTextColor(150, 150, 150);
+    
+    for (let i = 1; i <= pageCount; i++) {
+      pdf.setPage(i);
+      pdf.text(`Page ${i} sur ${pageCount}`, pageWidth - 20, pdf.internal.pageSize.height - 10, { align: 'right' });
+      pdf.text('Restaurant - Système de gestion des réclamations', 20, pdf.internal.pageSize.height - 10);
+    }
+
+    // Enregistrer le PDF
+    pdf.save('rapport_reclamations.pdf');
   }
 
   private initChart(): void {

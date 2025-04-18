@@ -1,39 +1,55 @@
-<div class="container mt-4">
-  <div class="card shadow-sm">
-    <div class="card-header bg-primary text-white">
-      <h3 class="mb-0"><i class="fas fa-edit"></i> Nouvelle Réclamation</h3>
+<app-headerthree></app-headerthree>
+<!-- Reclamation Form Start -->
+<div class="section section-padding reclamation-form-wrapper">
+  <div class="container">
+    <div class="section-title-wrap text-center mb-5">
+      <h2 class="title">Nouvelle Réclamation</h2>
+      <p class="subtitle">Nous sommes à votre écoute pour résoudre rapidement vos problèmes</p>
     </div>
-    <div class="card-body">
-      <form (ngSubmit)="onSubmit()" #reclamationForm="ngForm" class="needs-validation">
-        <div class="mb-4">
-          <label class="form-label">Commande associée</label>
-          <select [(ngModel)]="reclamation.commandeId" name="commandeId" 
-                  class="form-select" required>
-            <option value="" disabled>Sélectionnez une commande</option>
-            <option *ngFor="let cmd of commandes" [value]="cmd.id">
-              Commande #{{ cmd.reference }} - {{ cmd.montant }}€
-            </option>
-          </select>
-        </div>
 
-        <div class="mb-4">
-          <label class="form-label">Description du problème</label>
-          <textarea [(ngModel)]="reclamation.description" name="description" 
-                    class="form-control" rows="4" required
-                    placeholder="Décrivez votre problème en détail..."></textarea>
-        </div>
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="reclamation-form-card">
+          <div class="form-header">
+            <div class="form-icon">
+              <i class="fas fa-edit"></i>
+            </div>
+          </div>
+          <form (ngSubmit)="onSubmit()" #reclamationForm="ngForm" class="custom-form">
+            <div class="mb-4 form-floating">
+              <select [(ngModel)]="reclamation.commandeId" name="commandeId" 
+                      class="form-select" id="commandeSelect" required>
+                <option value="" disabled selected>Sélectionnez une commande</option>
+                <option *ngFor="let cmd of commandes" [value]="cmd.id">
+                  Commande #{{ cmd.id }} - {{ cmd.status }}
+                </option>
+              </select>
+              <label for="commandeSelect">Commande associée</label>
+            </div>
 
-        <div class="d-flex gap-2">
-          <button type="submit" class="btn btn-primary" 
-                  [disabled]="!reclamationForm.form.valid">
-            <i class="fas fa-paper-plane"></i> Envoyer
-          </button>
-          <button type="button" class="btn btn-outline-secondary" 
-                  routerLink="/reclamations">
-            <i class="fas fa-times"></i> Annuler
-          </button>
+            <div class="mb-4 form-floating">
+              <textarea [(ngModel)]="reclamation.description" name="description" 
+                      class="form-control" id="descriptionTextarea" rows="5" required
+                      placeholder="Décrivez votre problème en détail..."></textarea>
+              <label for="descriptionTextarea">Description du problème</label>
+            </div>
+
+            <div class="form-action-buttons">
+              <button type="submit" class="btn-custom primary submit-btn" 
+                      [disabled]="!reclamationForm.form.valid">
+                <i class="fas fa-paper-plane"></i> Envoyer
+                <span class="btn-hover-effect"></span>
+              </button>
+              <button type="button" class="btn-custom secondary cancel-btn" 
+                      routerLink="/reclamations">
+                <i class="fas fa-times"></i> Annuler
+              </button>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
     </div>
   </div>
 </div>
+<!-- Reclamation Form End -->
+<app-footer [layout]="'footer-dark'" [logo]="'assets/img/logo.png'"></app-footer>

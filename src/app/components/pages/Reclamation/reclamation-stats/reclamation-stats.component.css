@@ -1,7 +1,16 @@
 .stats-container {
   background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  padding: 30px;
+  position: relative;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.stats-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
 }
 
 .card {
@@ -32,9 +41,229 @@
   height: 400px;
   width: 100%;
   margin: 20px 0;
+  transition: opacity 0.3s ease;
 }
 
 canvas {
   width: 100% !important;
   height: 100% !important;
+}
+
+.stats-section {
+  background-color: #f9f9f9;
+  padding: 80px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.stats-section::before {
+  content: '';
+  position: absolute;
+  top: -80px;
+  right: -50px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background-color: rgba(94, 53, 177, 0.08);
+  z-index: 0;
+}
+
+.stats-section::after {
+  content: '';
+  position: absolute;
+  bottom: -80px;
+  left: -50px;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background-color: rgba(255, 126, 0, 0.08);
+  z-index: 0;
+}
+
+.section-title-wrap .title {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  position: relative;
+  display: inline-block;
+  color: #333;
+}
+
+.section-title-wrap .title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 3px;
+  width: 70px;
+  background: linear-gradient(to right, #ff7e00, #ff4e00);
+  border-radius: 10px;
+}
+
+.section-title-wrap .subtitle {
+  font-size: 18px;
+  color: #666;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.stats-header {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.stats-title h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.stats-title h3 i {
+  margin-right: 10px;
+  color: #ff7e00;
+  font-size: 24px;
+}
+
+.btn-back {
+  padding: 10px 20px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+  transform: translateX(-5px);
+}
+
+.stats-body {
+  position: relative;
+  min-height: 400px;
+}
+
+/* Loading spinner */
+.loading-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.spinner {
+  margin: 20px auto;
+  width: 70px;
+  text-align: center;
+}
+
+.spinner > div {
+  width: 18px;
+  height: 18px;
+  background-color: #ff7e00;
+  border-radius: 100%;
+  display: inline-block;
+  animation: bounce-delay 1.4s infinite ease-in-out both;
+  margin: 0 3px;
+}
+
+.spinner .bounce1 {
+  animation-delay: -0.32s;
+}
+
+.spinner .bounce2 {
+  animation-delay: -0.16s;
+}
+
+@keyframes bounce-delay {
+  0%, 80%, 100% { 
+    transform: scale(0);
+  } 40% { 
+    transform: scale(1.0);
+  }
+}
+
+.loading-container p {
+  margin-top: 15px;
+  color: #666;
+  font-size: 16px;
+}
+
+/* Error styling */
+.error-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+  animation: fadeInDown 0.5s ease;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -70%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.error-icon {
+  font-size: 50px;
+  color: #dc3545;
+  margin-bottom: 20px;
+}
+
+.error-message {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 25px;
+}
+
+/* Button styles */
+.btn-custom {
+  border: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  padding: 10px 20px;
+  border-radius: 8px;
+}
+
+.btn-custom.primary {
+  background: linear-gradient(to right, #ff7e00, #ff4e00);
+  color: white;
+}
+
+.btn-custom.secondary {
+  background: linear-gradient(to right, #5e35b1, #3949ab);
+  color: white;
+}
+
+.btn-custom:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .stats-container {
+    padding: 20px;
+  }
+  
+  .stats-header {
+    flex-direction: column;
+  }
+  
+  .stats-title {
+    margin-bottom: 15px;
+  }
+  
+  .chart-container {
+    height: 300px;
+  }
 }

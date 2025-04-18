@@ -1,24 +1,59 @@
-<div class="container mt-4">
-  <div class="stats-container p-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h3 class="text-primary"><i class="fas fa-chart-bar"></i> Statistiques des Réclamations</h3>
-      <button class="btn btn-secondary" routerLink="/reclamations">
-        <i class="fas fa-arrow-left"></i> Retour
-      </button>
+<app-headerthree></app-headerthree>
+<!-- Reclamation Stats Start -->
+<div class="section section-padding stats-section">
+  <div class="container">
+    <div class="section-title-wrap text-center mb-5">
+      <h2 class="title">Statistiques des Réclamations</h2>
+      <p class="subtitle">Analyse et répartition de toutes vos réclamations</p>
     </div>
 
-    <div class="chart-container" style="position: relative; height: 400px;">
-      <div *ngIf="loading" class="text-center p-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Chargement...</span>
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="stats-container">
+          <div class="stats-header">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div class="stats-title">
+                <h3><i class="fas fa-chart-bar"></i> Répartition par statut</h3>
+              </div>
+              <div class="header-actions">
+                <button class="btn-custom" (click)="exportToPDF()" [disabled]="loading || error">
+                  <i class="fas fa-file-pdf"></i> Exporter en PDF
+                </button>
+                <button class="btn-custom" routerLink="/reclamations">
+                  <i class="fas fa-arrow-left"></i> Retour
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="stats-body">
+            <div *ngIf="loading" class="loading-container">
+              <div class="spinner">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+              </div>
+              <p>Chargement des statistiques...</p>
+            </div>
+
+            <div *ngIf="error" class="error-container">
+              <div class="error-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+              </div>
+              <p class="error-message">{{ error }}</p>
+              <button class="btn-custom primary" (click)="loadStats()">
+                <i class="fas fa-sync-alt"></i> Réessayer
+              </button>
+            </div>
+
+            <div class="chart-container" [ngClass]="{'d-none': loading || error}">
+              <canvas #chartCanvas></canvas>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div *ngIf="error" class="alert alert-danger">
-        {{ error }}
-      </div>
-
-      <canvas #chartCanvas [style.display]="loading || error ? 'none' : 'block'"></canvas>
     </div>
   </div>
 </div>
+<!-- Reclamation Stats End -->
+<app-footer [layout]="'footer-dark'" [logo]="'assets/img/logo.png'"></app-footer>

@@ -1,24 +1,180 @@
 .reclamation-detail {
   background: #fff;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  margin-bottom: 30px;
+  transition: all 0.3s ease;
+}
+
+.reclamation-detail:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
 }
 
 .reclamation-detail p {
   font-size: 16px;
-  margin: 10px 0;
+  margin: 12px 0;
+  color: #444;
+  line-height: 1.6;
 }
 
-.btn-custom.primary {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
+.detail-header {
+  position: relative;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(to right, #ff7e00, #ff4e00);
+  border-radius: 10px;
+}
+
+.status-indicator {
+  display: inline-block;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.status-container {
+  margin: 20px 0;
+}
+
+/* Styles communs pour tous les boutons */
+.btn-custom {
+  border: none;
+  font-weight: 600;
+  padding: 12px 22px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   text-decoration: none;
+  min-width: 120px;
+}
+
+.btn-custom i {
+  margin-right: 8px;
+}
+
+.btn-custom:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles spécifiques selon le type de bouton */
+.btn-custom.primary {
+  background-color: #3498db;
+  color: white;
 }
 
 .btn-custom.primary:hover {
-  background-color: #0056b3;
+  background-color: #2980b9;
+}
+
+.btn-custom.secondary {
+  background-color: #5e35b1;
+  color: white;
+}
+
+.btn-custom.secondary:hover {
+  background-color: #4527a0;
+}
+
+.btn-custom.success {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.btn-custom.success:hover {
+  background-color: #27ae60;
+}
+
+.btn-custom.warning {
+  background-color: #f39c12;
+  color: white;
+}
+
+.btn-custom.warning:hover {
+  background-color: #e67e22;
+}
+
+.btn-custom.danger {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-custom.danger:hover {
+  background-color: #c0392b;
+}
+
+.btn-custom.info {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.btn-custom.info:hover {
+  background-color: #138496;
+}
+
+.btn-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+/* Style pour les badges de statut */
+.badge {
+  display: inline-block;
+  padding: 8px 15px;
+  font-weight: 500;
+  border-radius: 20px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-warning {
+  background-color: #ffeaa7;
+  color: #d35400;
+}
+
+.badge-info {
+  background-color: #d6eaf8;
+  color: #2980b9;
+}
+
+.badge-success {
+  background-color: #d5f5e3;
+  color: #27ae60;
+}
+
+.badge-danger {
+  background-color: #fadbd8;
+  color: #c0392b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .btn-container {
+    flex-direction: column;
+  }
+  
+  .btn-custom {
+    width: 100%;
+    margin-bottom: 10px;
+  }
 }

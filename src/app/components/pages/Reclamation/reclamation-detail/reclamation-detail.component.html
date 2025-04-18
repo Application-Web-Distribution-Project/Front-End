@@ -1,33 +1,97 @@
-<app-header></app-header>  <!-- Inclusion du header global -->
+<app-headerthree></app-headerthree>
 
-<div class="container mt-4" *ngIf="reclamation">
-  <div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <h4>Détails de la réclamation #{{ reclamation.id }}</h4>
-      <span [class]="reclamationService.getStatusBadgeClass(reclamation.status)">
-        {{ reclamationService.getStatusLabel(reclamation.status) }}
-      </span>
+<!-- Reclamation Detail Start -->
+<div class="section section-padding">
+  <div class="container" *ngIf="reclamation">
+    <div class="section-title-wrap text-center mb-5">
+      <h2 class="title">Détails de la Réclamation</h2>
+      <p class="subtitle">Informations et suivi de votre réclamation</p>
     </div>
-    <div class="card-body">
-      <p class="lead">{{ reclamation.description }}</p>
-      
-      <div class="mt-4">
-        <h5>Modifier le statut</h5>
-        <div class="btn-group">
-          <button class="btn btn-warning" (click)="updateStatus('EN_ATTENTE')" [disabled]="reclamation.status === 'EN_ATTENTE'">
-            En attente
-          </button>
-          <button class="btn btn-info" (click)="updateStatus('EN_COURS')" [disabled]="reclamation.status === 'EN_COURS'">
-            En cours
-          </button>
-          <button class="btn btn-success" (click)="updateStatus('RESOLU')" [disabled]="reclamation.status === 'RESOLU'">
-            Résolu
-          </button>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="ct-contact-form">
+          <div class="detail-header mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+              <h4>Réclamation #{{ reclamation.id }}</h4>
+              <span [class]="getStatusClass(reclamation.status)">
+                {{ reclamationService.getStatusLabel(reclamation.status) }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="mb-4">
+            <h5>Description</h5>
+            <blockquote>{{ reclamation.description }}</blockquote>
+          </div>
+          
+          <!-- Section Détails de la Commande -->
+          <div class="mb-4" *ngIf="reclamation?.commande">
+            <h5>Détails de la Commande</h5>
+            <div class="ct-info-box">
+              <i class="fas fa-shopping-cart"></i>
+              <div class="row">
+                <div class="col-md-6">
+                  <p><strong>ID Commande:</strong> {{ reclamation.commande.id }}</p>
+                  <p><strong>Date:</strong> {{ formatDate(reclamation.commande.dateCommande) }}</p>
+                </div>
+                <div class="col-md-6">
+                  <p><strong>Statut:</strong> 
+                    <span class="badge" [ngClass]="'badge-' + getCommandeStatusClass(reclamation.commande.status || '')">
+                      {{ reclamation.commande.status || 'Non défini' }}
+                    </span>
+                  </p>
+                  <p><strong>Utilisateur:</strong> {{ reclamation.commande.userId }}</p>
+                </div>
+              </div>
+              <div *ngIf="reclamation.commande.menuIds && reclamation.commande.menuIds.length > 0" class="mt-3">
+                <p><strong>Menus commandés:</strong></p>
+                <ul class="ct-list">
+                  <li *ngFor="let menuId of reclamation.commande.menuIds">
+                    {{ menuId }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mb-4">
+            <div class="row">
+              <div class="col-md-6" *ngIf="reclamation.dateResolution">
+                <h6><i class="fas fa-check-circle mr-2"></i> Date de résolution</h6>
+                <p>{{ reclamationService.formatDate(reclamation.dateResolution) }}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="status-container">
+            <h5>Modifier le statut</h5>
+            <div class="btn-container">
+              <button class="btn-custom warning" (click)="updateStatus('EN_ATTENTE')" [disabled]="reclamation.status === 'EN_ATTENTE'">
+                <i class="fas fa-pause"></i> En attente
+              </button>
+              <button class="btn-custom info" (click)="updateStatus('EN_COURS')" [disabled]="reclamation.status === 'EN_COURS'">
+                <i class="fas fa-clock"></i> En cours
+              </button>
+              <button class="btn-custom success" (click)="updateStatus('RESOLU')" [disabled]="reclamation.status === 'RESOLU'">
+                <i class="fas fa-check"></i> Résolu
+              </button>
+              <button class="btn-custom danger" (click)="deleteReclamation(reclamation.id)">
+                <i class="fas fa-trash"></i> Supprimer
+              </button>
+            </div>
+          </div>
+          
+          <div class="btn-container">
+            <a routerLink="/reclamations" class="btn-custom secondary">
+              <i class="fas fa-arrow-left"></i> Retour à la liste
+            </a>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+<!-- Reclamation Detail End -->
 
-<a routerLink="/reclamations" class="btn-custom primary">Retour</a>
-<app-footer></app-footer>  <!-- Inclusion du footer global -->
+<app-footer [layout]="'footer-dark'" [logo]="'assets/img/logo.png'"></app-footer>

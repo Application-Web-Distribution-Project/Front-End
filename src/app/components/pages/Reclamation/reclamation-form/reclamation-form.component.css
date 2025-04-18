@@ -11,13 +11,31 @@
 }
 
 .section-title-wrap .title {
-  font-size: 24px;
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  position: relative;
+  display: inline-block;
   color: #333;
 }
 
+.section-title-wrap .title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 3px;
+  width: 70px;
+  background: linear-gradient(to right, #ff7e00, #ff4e00);
+  border-radius: 10px;
+}
+
 .section-title-wrap .subtitle {
-  font-size: 16px;
+  font-size: 18px;
   color: #666;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
 .form-group {
@@ -40,4 +58,244 @@
 
 .btn-custom.primary:hover {
   background-color: #0056b3;
+}
+
+.reclamation-form-wrapper {
+  background-color: #f9f9f9;
+  padding: 80px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.reclamation-form-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -80px;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background-color: rgba(255, 126, 0, 0.08);
+  z-index: 0;
+}
+
+.reclamation-form-wrapper::after {
+  content: '';
+  position: absolute;
+  bottom: -100px;
+  left: -80px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background-color: rgba(94, 53, 177, 0.08);
+  z-index: 0;
+}
+
+.reclamation-form-card {
+  background-color: #fff;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  padding: 0 0 40px 0;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.reclamation-form-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+.form-header {
+  position: relative;
+  text-align: center;
+  padding: 30px 0;
+  margin-bottom: 20px;
+}
+
+.form-icon {
+  width: 80px;
+  height: 80px;
+  line-height: 80px;
+  text-align: center;
+  background: linear-gradient(to right, #ff7e00, #ff4e00);
+  color: white;
+  font-size: 28px;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  box-shadow: 0 8px 15px rgba(255, 126, 0, 0.2);
+  position: relative;
+  z-index: 2;
+}
+
+.form-icon::after {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 126, 0, 0.5);
+  animation: spin 15s linear infinite;
+  z-index: -1;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.custom-form {
+  padding: 20px 40px;
+}
+
+.form-floating {
+  position: relative;
+  margin-bottom: 25px;
+}
+
+.form-floating input,
+.form-floating select,
+.form-floating textarea {
+  height: auto;
+  padding: 20px 15px 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease;
+}
+
+.form-floating textarea {
+  min-height: 150px;
+  resize: none;
+}
+
+.form-floating label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 18px 15px;
+  color: #666;
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.form-floating input:focus,
+.form-floating select:focus,
+.form-floating textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 126, 0, 0.2);
+  border-color: #ff7e00;
+  background-color: #fff;
+}
+
+.form-floating input:focus ~ label,
+.form-floating input:not(:placeholder-shown) ~ label,
+.form-floating select:focus ~ label,
+.form-floating select:not([value=""]):not([value="null"]) ~ label,
+.form-floating textarea:focus ~ label,
+.form-floating textarea:not(:placeholder-shown) ~ label {
+  transform: translateY(-10px) scale(0.85);
+  color: #ff7e00;
+  padding: 5px 15px;
+}
+
+.form-action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 40px;
+}
+
+.btn-custom {
+  padding: 12px 25px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.btn-custom.primary {
+  background: linear-gradient(to right, #ff7e00, #ff4e00);
+  color: white;
+}
+
+.btn-custom.secondary {
+  background: linear-gradient(to right, #5e35b1, #3949ab);
+  color: white;
+}
+
+.btn-custom:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-hover-effect {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-25deg);
+  transition: all 0.4s ease;
+  z-index: -1;
+}
+
+.btn-custom:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.btn-custom:hover:not(:disabled) .btn-hover-effect {
+  left: 100%;
+}
+
+.submit-btn {
+  min-width: 140px;
+}
+
+.cancel-btn {
+  min-width: 140px;
+  opacity: 0.9;
+}
+
+/* Animation pour les erreurs de validation */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.ng-invalid.ng-touched:not(form) {
+  border-color: #dc3545;
+  animation: shake 0.5s;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .reclamation-form-card {
+    padding: 0 0 30px 0;
+  }
+  
+  .custom-form {
+    padding: 15px 25px;
+  }
+  
+  .form-action-buttons {
+    flex-direction: column;
+  }
+  
+  .btn-custom {
+    width: 100%;
+    margin-bottom: 10px;
+  }
 }
