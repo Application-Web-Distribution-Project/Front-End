@@ -3,6 +3,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { ReclamationStatsComponent } from './components/pages/Reclamation/reclamation-stats/reclamation-stats.component';
 import { AuthGuard } from './guards/auth.guard';
 import { NonAuthGuard } from './guards/non-auth.guard';
+import { MenuListComponent } from './components/pages/menu/menulist/menulist.component';
 
 const routes: Routes = [
   { 
@@ -47,6 +48,7 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   // Les routes publiques
+  { path: 'menu-v1', component: MenuListComponent},
   { path: 'blog-grid', loadChildren: () => import('./components/pages/bloggrid/bloggrid.module').then(m => m.BloggridModule), data: { breadcrumb: 'Blog Grid' } },
   { path: 'blog-list', loadChildren: () => import('./components/pages/bloglist/bloglist.module').then(m => m.BloglistModule), data: { breadcrumb: 'Blog List' } },
   { path: 'blog-masonry', loadChildren: () => import('./components/pages/blogmasonry/blogmasonry.module').then(m => m.BlogmasonryModule), data: { breadcrumb: 'Blog Masonry' } },
@@ -54,13 +56,11 @@ const routes: Routes = [
   { path: 'blog-single/:id', loadChildren: () => import('./components/pages/blogsingle/blogsingle.module').then(m => m.BlogsingleModule), data: { breadcrumb: 'Blog Details' } },
   { path: 'about', loadChildren: () => import('./components/pages/about/about.module').then(m => m.AboutModule), data: { breadcrumb: 'About Us' } },
   { path: 'legal', loadChildren: () => import('./components/pages/legal/legal.module').then(m => m.LegalModule), data: { breadcrumb: 'Legal' } },
-  { path: 'menu-v1', loadChildren: () => import('./components/pages/menuone/menuone.module').then(m => m.MenuoneModule), data: { breadcrumb: 'Menu v1' } },
   { path: 'menu-v2', loadChildren: () => import('./components/pages/menutwo/menutwo.module').then(m => m.MenutwoModule), data: { breadcrumb: 'Menu v2' } },
   { path: 'menu-item-v1/:id', loadChildren: () => import('./components/pages/menuitemone/menuitemone.module').then(m => m.MenuitemoneModule), data: { breadcrumb: 'Menu Item v1' } },
   { path: 'menu-item-v2/:id', loadChildren: () => import('./components/pages/menuitemtwo/menuitemtwo.module').then(m => m.MenuitemtwoModule), data: { breadcrumb: 'Menu Item v2' } },
   { path: 'locations', loadChildren: () => import('./components/pages/locations/locations.module').then(m => m.LocationsModule), data: { breadcrumb: 'Locations' } },
   { path: 'contact', loadChildren: () => import('./components/pages/contact/contact.module').then(m => m.ContactModule), data: { breadcrumb: 'Contact Us' } },
-  
   // Les routes protégées
   { 
     path: 'checkout', 
