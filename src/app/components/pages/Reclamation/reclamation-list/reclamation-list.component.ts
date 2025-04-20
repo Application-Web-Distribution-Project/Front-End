@@ -159,21 +159,18 @@ export class ReclamationListComponent implements OnInit, OnDestroy {
   }
 
   updateStatus(id: number, newStatus: string): void {
-    const comment = prompt('Ajouter un commentaire (optionnel):');
     
-    console.log(`Updating status: ID=${id}, newStatus=${newStatus}, comment=${comment}`);
     
-    this.reclamationService.updateReclamationStatus(id, newStatus, comment || '')
+    
+    this.reclamationService.updateReclamationStatus(id, newStatus)
+     
       .subscribe({
         next: (updated) => {
           console.log('Status updated successfully:', updated);
           alert('Statut mis à jour avec succès!');
           this.loadReclamations();
-        },
-        error: (error) => {
-          console.error('Status update error:', error);
-          alert('Erreur lors de la mise à jour du statut: ' + error.message);
         }
+        
       });
   }
 
