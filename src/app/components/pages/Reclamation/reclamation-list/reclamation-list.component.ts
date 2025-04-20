@@ -5,6 +5,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 import { catchError, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { EMPTY, Subject, Subscription } from 'rxjs';
+import { UserService } from 'src/app/services/user.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-reclamation-list',
@@ -16,6 +18,7 @@ export class ReclamationListComponent implements OnInit, OnDestroy {
   isLoading: boolean = true;
   errorMessage: string = '';
   modalContent: Reclamation | null = null;
+  isAdmin: boolean = false;
   
   // Propriétés pour la recherche
   searchQuery: string = '';
@@ -41,10 +44,13 @@ export class ReclamationListComponent implements OnInit, OnDestroy {
   constructor(
     private reclamationService: ReclamationService,
     private modalService: NgbModal,
-    private router: Router
+    private router: Router,
+    private userService: UserService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.checkAdminRole();
     this.loadReclamations();
     
     // Configuration de la recherche avec debounce pour éviter trop d'appels API
@@ -194,6 +200,17 @@ export class ReclamationListComponent implements OnInit, OnDestroy {
       case 'LIVREE': return 'success';
       case 'ANNULEE': return 'danger';
       default: return 'secondary';
+    }
+  }
+
+  private checkAdminRole(): void {
+    const userInfo = this.authService.getUserInfoFromToken();
+    if (userInfo) {
+      this.isAdmin = userInfo.role === 'ADMIN';
+      console.log('Role utilisateur:', userInfo.role);
+    } else {
+      console.error('Impossible de récupérer les informations utilisateur depuis le token');
+      this.isAdmin = false;
     }
   }
 }

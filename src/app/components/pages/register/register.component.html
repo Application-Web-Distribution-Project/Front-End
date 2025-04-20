@@ -23,15 +23,27 @@
                 </div>
                 
                 <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-                    <!-- Nom d'utilisateur -->
+                    <!-- Nom -->
                     <div class="form-group">
                         <input type="text" 
                               class="form-control form-control-light" 
-                              placeholder="Nom d'utilisateur" 
-                              formControlName="username">
-                        <div *ngIf="f.username.touched && f.username.errors" class="text-danger mt-1 small">
-                            <div *ngIf="f.username.errors.required">Nom d'utilisateur est requis</div>
-                            <div *ngIf="f.username.errors.minlength">Le nom d'utilisateur doit comporter au moins 3 caractères</div>
+                              placeholder="Nom" 
+                              formControlName="nom">
+                        <div *ngIf="f.nom.touched && f.nom.errors" class="text-danger mt-1 small">
+                            <div *ngIf="f.nom.errors.required">Le nom est requis</div>
+                            <div *ngIf="f.nom.errors.minlength">Le nom doit comporter au moins 2 caractères</div>
+                        </div>
+                    </div>
+
+                    <!-- Prénom -->
+                    <div class="form-group">
+                        <input type="text" 
+                              class="form-control form-control-light" 
+                              placeholder="Prénom" 
+                              formControlName="prenom">
+                        <div *ngIf="f.prenom.touched && f.prenom.errors" class="text-danger mt-1 small">
+                            <div *ngIf="f.prenom.errors.required">Le prénom est requis</div>
+                            <div *ngIf="f.prenom.errors.minlength">Le prénom doit comporter au moins 2 caractères</div>
                         </div>
                     </div>
                     

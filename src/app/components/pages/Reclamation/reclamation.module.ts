@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { ReclamationListComponent } from './reclamation-list/reclamation-list.component';
 import { ReclamationFormComponent } from './reclamation-form/reclamation-form.component';
@@ -27,6 +27,7 @@ const routes: Routes = [
     CommonModule,
     SharedModule,
     FormsModule,
+    ReactiveFormsModule,
     RouterModule.forChild(routes)
   ]
 })

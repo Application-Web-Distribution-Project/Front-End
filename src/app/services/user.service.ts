@@ -71,6 +71,16 @@ export class UserService {
     );
   }
 
+  // Inscription d'un nouvel utilisateur
+  register(userData: { nom: string, prenom: string, email: string, password: string }): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}`, userData).pipe(
+      tap(response => {
+        console.log('✅ Inscription réussie:', response);
+      }),
+      catchError(this.handleError)
+    );
+  }
+
   // Déconnexion
   logout() {
     localStorage.removeItem('token');

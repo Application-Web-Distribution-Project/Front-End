@@ -194,21 +194,23 @@ export class ReclamationStatsComponent implements AfterViewInit {
         this.chart.destroy();
       }
 
-      // Créer un tableau de couleurs correspondant aux statuts
-      const backgroundColors = this.statsData.labels.map(label => 
-        this.reclamationService.getStatusColor(
-          Object.keys(this.reclamationService['labels']).find(key => 
-            this.reclamationService.getStatusLabel(key) === label
-          ) || ''
-        ) + '80' // Ajouter de la transparence
-      );
+      // Define default colors for different status types
+      const statusColors = {
+        'EN_ATTENTE': '#FFA500',  // Orange
+        'EN_COURS': '#3498DB',    // Blue
+        'RESOLUE': '#2ECC71',     // Green
+        'REJETEE': '#E74C3C'      // Red
+      };
 
-      const borderColors = this.statsData.labels.map(label =>
-        this.reclamationService.getStatusColor(
-          Object.keys(this.reclamationService['labels']).find(key => 
-            this.reclamationService.getStatusLabel(key) === label
-          ) || ''
-        )
+      // Create background colors with transparency
+      const backgroundColors = this.statsData.labels.map(label => {
+        const baseColor = statusColors[this.getStatusKeyFromLabel(label)] || '#999999';
+        return this.addAlpha(baseColor, 0.5);
+      });
+
+      // Create border colors (solid)
+      const borderColors = this.statsData.labels.map(label => 
+        statusColors[this.getStatusKeyFromLabel(label)] || '#999999'
       );
 
       this.chart = new Chart(ctx, {
@@ -254,5 +256,35 @@ export class ReclamationStatsComponent implements AfterViewInit {
       console.error('Error initializing chart:', error);
       this.error = "Erreur lors de l'initialisation du graphique";
     }
+  }
+
+  // Helper function to get status key from label
+  private getStatusKeyFromLabel(label: string): string {
+    switch (label.toUpperCase()) {
+      case 'EN ATTENTE':
+        return 'EN_ATTENTE';
+      case 'EN COURS':
+        return 'EN_COURS';
+      case 'RÉSOLUE':
+      case 'RESOLUE':
+        return 'RESOLUE';
+      case 'REJETÉE':
+      case 'REJETEE':
+        return 'REJETEE';
+      default:
+        return '';
+    }
+  }
+
+  // Helper function to add alpha channel to color
+  private addAlpha(color: string, alpha: number): string {
+    // If color is in hex format, convert it to RGB
+    if (color.startsWith('#')) {
+      const r = parseInt(color.slice(1, 3), 16);
+      const g = parseInt(color.slice(3, 5), 16);
+      const b = parseInt(color.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+    return color;
   }
 }

@@ -35,13 +35,12 @@
 
     <div class="reclamation-actions mb-4">
       <div class="d-flex justify-content-end">
-        <button class="btn-custom" routerLink="stats">
+        <button *ngIf="isAdmin" class="btn-custom" routerLink="stats">
           <i class="fas fa-chart-bar"></i> Statistiques
         </button>
         <button class="btn-custom" (click)="addReclamation()">
           <i class="fas fa-plus"></i> Nouvelle réclamation
         </button>
-        
       </div>
     </div>
 
@@ -86,10 +85,10 @@
               <button class="action-btn details-btn" (click)="viewReclamation(reclamation, reclamationModal)">
                 <i class="fas fa-eye"></i> DÉTAILS
               </button>
-              <button class="action-btn progress-btn" (click)="updateStatus(reclamation.id, 'EN_COURS')">
+              <button *ngIf="isAdmin" class="action-btn progress-btn" (click)="updateStatus(reclamation.id, 'EN_COURS')">
                 <i class="fas fa-clock"></i> EN COURS
               </button>
-              <button class="action-btn resolve-btn" (click)="updateStatus(reclamation.id, 'RESOLU')">
+              <button *ngIf="isAdmin" class="action-btn resolve-btn" (click)="updateStatus(reclamation.id, 'RESOLU')">
                 <i class="fas fa-check"></i> RÉSOLU
               </button>
               <button class="action-btn delete-btn" (click)="deleteReclamation(reclamation.id)">
