@@ -8,5 +8,5 @@ export interface Commande {
   menuIds: string[];
   paymentStatus?: string;
   paymentIntentId?: string;
-  user?: UserDTO;  // Ajout de l'utilisateur enrichi
+  user?: UserDTO;  // User details from enrichment
 }

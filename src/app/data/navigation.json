@@ -141,7 +141,7 @@
     },
     {
         "id": 6,
-        "linkText": "Contact Us",
-        "link": "/contact"
+        "linkText": "commande",
+        "link": "/commande"
     }
 ]

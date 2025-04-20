@@ -75,6 +75,12 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   { 
+    path: 'commande', 
+    loadChildren: () => import('./components/pages/Commandes/commandes.module').then(m => m.CommandesModule), 
+    data: { breadcrumb: 'Commandes' },
+    canActivate: [AuthGuard]
+  },
+  { 
     path: 'reclamations', 
     loadChildren: () => import('./components/pages/Reclamation/reclamation.module').then(m => m.ReclamationModule), 
     data: { breadcrumb: 'Réclamations' },

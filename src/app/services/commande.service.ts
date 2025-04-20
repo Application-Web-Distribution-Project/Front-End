@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry, timeout, tap } from 'rxjs/operators';
-import { Commande } from '../models/reclamation.model';
+import { Commande } from '../models/commande.model'; // Fixed import to use correct model
 
 @Injectable({
   providedIn: 'root'
@@ -57,7 +57,7 @@ export class CommandeService {
 
   // Récupérer les commandes de l'utilisateur connecté
   getMyCommandes(): Observable<Commande[]> {
-    return this.http.get<Commande[]>(`${this.apiUrl}/me`, this.getHttpOptions()).pipe(
+    return this.http.get<Commande[]>(`${this.apiUrl}/my-orders`, this.getHttpOptions()).pipe(
       timeout(this.TIMEOUT),
       retry(this.RETRY_ATTEMPTS),
       catchError(this.handleError)
@@ -110,15 +110,16 @@ export class CommandeService {
 
   // Obtenir la classe CSS pour le statut
   getStatusClass(status: string): string {
-    if (!status) return 'badge bg-secondary';
+    if (!status) return 'badge-secondary';
 
     switch (status.toUpperCase()) {
-      case 'EN_ATTENTE': return 'badge bg-warning';
-      case 'EN_PREPARATION': return 'badge bg-info';
-      case 'PRET': return 'badge bg-success';
-      case 'LIVREE': return 'badge bg-primary';
-      case 'ANNULEE': return 'badge bg-danger';
-      default: return 'badge bg-secondary';
+      case 'EN_ATTENTE': return 'badge-warning';
+      case 'EN_PREPARATION': 
+      case 'EN_COURS': return 'badge-info';
+      case 'PRET': 
+      case 'LIVREE': return 'badge-success';
+      case 'ANNULEE': return 'badge-danger';
+      default: return 'badge-secondary';
     }
   }
 
@@ -128,7 +129,8 @@ export class CommandeService {
 
     switch (status.toUpperCase()) {
       case 'EN_ATTENTE': return '⏳ En attente';
-      case 'EN_PREPARATION': return '🍳 En préparation';
+      case 'EN_PREPARATION': 
+      case 'EN_COURS': return '🍳 En préparation';
       case 'PRET': return '✅ Prêt';
       case 'LIVREE': return '🚚 Livrée';
       case 'ANNULEE': return '❌ Annulée';

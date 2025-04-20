@@ -1,0 +1,127 @@
+.section {
+  padding: 80px 0;
+}
+
+.section-header {
+  margin-bottom: 50px;
+}
+
+.custom-primary {
+  color: #ff7a21;
+}
+
+.title {
+  font-size: 42px;
+  margin-bottom: 20px;
+}
+
+.ct-responsive-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.ct-responsive-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ct-responsive-table th, 
+.ct-responsive-table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.ct-responsive-table th {
+  background-color: #f8f9fa;
+  font-weight: 700;
+}
+
+.ct-responsive-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* Table styling */
+.table {
+    margin-bottom: 30px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0,0,0,0.05);
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    color: #495057;
+    font-weight: 600;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+/* Badge styling */
+.badge {
+    padding: 6px 10px;
+    border-radius: 30px;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.badge-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.badge-info {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.badge-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+/* Empty state styling */
+.text-center p {
+    margin-bottom: 20px;
+    color: #6c757d;
+}
+
+/* Modal styling */
+.list-group-item {
+    border-color: #e9ecef;
+}
+
+.modal-title {
+    color: #212529;
+    font-weight: 600;
+}
+
+.modal-body strong {
+    color: #495057;
+}
+
+/* Alert styling */
+.alert-info {
+    background-color: #e3f2fd;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+
+/* Button hover effects */
+.btn-custom.primary:hover {
+    opacity: 0.9;
+}
