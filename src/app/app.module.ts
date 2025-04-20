@@ -5,17 +5,19 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BreadcrumbModule } from 'angular-crumbs';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { PreloaderComponent } from './preloader/preloader.component';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { SharedModule } from "./components/shared/shared.module";
+import { MenuListComponent } from './components/pages/menu/menulist/menulist.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    PreloaderComponent
+    PreloaderComponent,
+    MenuListComponent
   ],
   imports: [
     BrowserModule,
@@ -25,8 +27,9 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     AppRoutingModule,
     BrowserAnimationsModule,
     BreadcrumbModule,
-    NgbModule
-  ],
+    NgbModule,
+    SharedModule
+],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }

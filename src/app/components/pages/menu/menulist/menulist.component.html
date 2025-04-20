@@ -1,0 +1,332 @@
+<app-headerinner></app-headerinner>
+<app-breadcrumb></app-breadcrumb>
+
+<!-- Weather and Recipe Tools Section -->
+<div class="container mb-4">
+  <div class="card shadow mb-4">
+    <div class="card-header">
+      <h4 class="mb-0">Weather-Based Menu Recommendations</h4>
+    </div>
+    <div class="card-body">
+      <div class="input-group mb-3">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Enter your city"
+          [(ngModel)]="cityName"
+        />
+        <div class="input-group-append">
+          <button
+            class="btn btn-custom"
+            type="button"
+            (click)="getWeatherRecommendations()"
+          >
+            Get Recommendations
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="weatherLoading" class="text-center py-3">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <div *ngIf="weatherResults" class="weather-results mt-3">
+        <div class="card">
+          <div class="card-body">
+            <h5>Food recommendations based on the weather:</h5>
+            <div [innerHTML]="weatherResults"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow mb-4">
+    <div class="card-header">
+      <h4 class="mb-0">Find Similar Recipes</h4>
+    </div>
+    <div class="card-body">
+      <div class="input-group mb-3">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Enter dish name"
+          [(ngModel)]="dishName"
+        />
+        <div class="input-group-append">
+          <button
+            class="btn btn-custom"
+            type="button"
+            (click)="findSimilarRecipes()"
+          >
+            Search
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="similarLoading" class="text-center py-3">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <div
+        *ngIf="similarRecipes && similarRecipes.results?.length > 0"
+        class="row mt-3"
+      >
+        <div class="col-md-4 mb-3" *ngFor="let recipe of similarRecipes.results">
+          <div class="card h-100">
+            <img
+              *ngIf="recipe.image"
+              [src]="recipe.image"
+              class="card-img-top"
+              alt="{{ recipe.title }}"
+            />
+            <div class="card-body">
+              <h5 class="card-title">{{ recipe.title }}</h5>
+              <p *ngIf="recipe.readyInMinutes">
+                Ready in {{ recipe.readyInMinutes }} minutes
+              </p>
+              <button
+                class="btn btn-sm btn-outline-primary"
+                (click)="getNutrition(recipe.id)"
+              >
+                View Nutrition
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        *ngIf="similarRecipes && similarRecipes.results?.length === 0"
+        class="alert alert-info"
+      >
+        No similar recipes found. Try a different dish name.
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow">
+    <div class="card-header">
+      <h4 class="mb-0">Nutrition Information</h4>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Select a menu item:</label>
+            <select
+              class="form-control"
+              [(ngModel)]="selectedMenuId"
+              (change)="selectedMenuId && getNutrition(selectedMenuId)"
+            >
+              <option [ngValue]="null">-- Select a dish --</option>
+              <option *ngFor="let menu of menus" [ngValue]="menu.id">
+                {{ menu.name }}
+              </option>
+            </select>
+          </div>
+          <div class="mt-3">
+            <p>Or enter a Spoonacular recipe ID:</p>
+            <div class="input-group">
+              <input
+                type="number"
+                id="recipeId"
+                class="form-control"
+                placeholder="Recipe ID"
+                [(ngModel)]="recipeId"
+              />
+              <div class="input-group-append">
+                <button
+                  id="nutrition-button"
+                  class="btn btn-custom"
+                  (click)="getNutrition(recipeId)"
+                >
+                  Get Nutrition
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div *ngIf="nutritionLoading" class="text-center py-3">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+
+          <div *ngIf="nutritionInfo" class="nutrition-info mt-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Nutrition Facts</h5>
+                <div class="nutrition-content">
+                  <div class="nutrients">
+                    <div
+                      class="nutrient-item"
+                      *ngFor="let nutrient of nutritionInfo.nutrients"
+                    >
+                      <strong>{{ nutrient.name }}:</strong>
+                      {{ nutrient.amount }}{{ nutrient.unit }}
+                      <small *ngIf="nutrient.percentOfDailyNeeds"
+                        >({{ nutrient.percentOfDailyNeeds }}% daily
+                        value)</small
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Add this after the tab content -->
+<input type="hidden" id="recipeId" />
+<button
+  id="nutrition-button"
+  hidden
+  (click)="processNutritionRequest()"
+></button>
+<!-- Add Menu Button -->
+<div class="container mb-4">
+  <button class="btn-custom add-menu-btn" (click)="openAddMenuModal(addMenuModal)">
+    <i class="fas fa-plus mr-2"></i> Add New Menu Item
+  </button>
+</div>
+
+<!-- Menu Wrapper Start -->
+<div class="section section-padding">
+  <div class="container">
+    <div class="menu-container row">
+      <!-- Product Start -->
+      <div class="col-lg-4 col-md-6" *ngFor="let menu of menus">
+        <div class="product">
+          <a class="product-thumb"> 
+            <img [src]="getMenuImage(menu.id)" alt="{{menu.name}}" /> 
+          </a>
+          <!-- Menu Action Buttons -->
+          <div class="menu-actions">
+            <button class="action-btn edit-btn" (click)="openEditMenuModal(menu, editMenuModal)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="action-btn delete-btn" (click)="confirmDelete(menu.id)">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="product-body">
+            <div class="product-desc">
+              <h4> <a>{{menu.name}}</a> </h4>
+              <p>{{menu.description}}</p>
+              <p class="product-price">{{menu.price}} TND</p>
+              <div class="favorite">
+                <i class="far fa-heart"></i>
+              </div>
+            </div>
+            <div class="product-controls">
+              <a class="order-item btn-custom btn-sm shadow-none">
+                Order <i class="fas fa-shopping-cart"></i>
+              </a>
+              <button type="button" class="btn-custom secondary btn-sm shadow-none" (click)="open(shopmodal, menu)">
+                Customize <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Product End -->
+    </div>
+  </div>
+</div>
+<!-- Menu Wrapper End -->
+
+<!-- Add Menu Modal -->
+<ng-template #addMenuModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Add New Menu Item</h4>
+    <button type="button" class="close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form #addForm="ngForm">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" class="form-control" name="name" [(ngModel)]="newMenu.name" required>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea class="form-control" name="description" [(ngModel)]="newMenu.description" required></textarea>
+      </div>
+      <div class="form-group">
+        <label>Price (TND)</label>
+        <input type="number" class="form-control" name="price" [(ngModel)]="newMenu.price" required min="0">
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-custom" (click)="addMenu(); modal.close()" [disabled]="!addForm.valid">Add Item</button>
+  </div>
+</ng-template>
+
+<!-- Edit Menu Modal -->
+<ng-template #editMenuModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Edit Menu Item</h4>
+    <button type="button" class="close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form #editForm="ngForm">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" class="form-control" name="name" [(ngModel)]="editMenu.name" required>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea class="form-control" name="description" [(ngModel)]="editMenu.description" required></textarea>
+      </div>
+      <div class="form-group">
+        <label>Price (TND)</label>
+        <input type="number" class="form-control" name="price" [(ngModel)]="editMenu.price" required min="0">
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-custom" (click)="updateMenu(); modal.close()" [disabled]="!editForm.valid">Save Changes</button>
+  </div>
+</ng-template>
+
+<!-- Customize Modal -->
+<ng-template #shopmodal let-modal>
+  <button type="button" class="close-btn" (click)="modal.dismiss('Cross click')">
+    <span></span>
+    <span></span> 
+  </button>
+  <div class="modal-header modal-bg" [style.backgroundImage]="'url(' + modalContent.img + ')'"></div>
+  <div class="modal-body">
+    <div class="customize-meta">
+      <h4 class="customize-title">{{modalContent.name}} <span class="custom-primary">{{modalContent.price}} TND</span></h4>
+      <p>{{modalContent.description}}</p>
+    </div>
+    <div class="customize-controls">
+      <div class="qty">
+        <span class="qty-subtract" (click)="decreaseQuantity()"><i class="fas fa-minus"></i></span>
+        <input type="text" name="qty" [(ngModel)]="quantity" readonly>
+        <span class="qty-add" (click)="increaseQuantity()"><i class="fas fa-plus"></i></span>
+      </div>
+      <div class="customize-total">
+        <h5>Total Price: <span class="final-price custom-primary">{{calculateTotal()}} <span>TND</span></span></h5>
+      </div>
+    </div>
+    <button type="button" class="btn-custom btn-block">Order Now</button>
+  </div>
+</ng-template>
