@@ -40,7 +40,7 @@ export class ReclamationDetailComponent implements OnInit {
 
     const comment = prompt('Ajouter un commentaire (optionnel):');
     
-    this.reclamationService.updateReclamationStatus(this.reclamation.id, newStatus, comment || '')
+    this.reclamationService.updateReclamationStatus(this.reclamation.id, newStatus)
       .subscribe({
         next: (updated) => {
           this.reclamation = updated;

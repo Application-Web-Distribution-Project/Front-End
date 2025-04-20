@@ -28,14 +28,15 @@ export class RegisterComponent implements OnInit {
   ) {
     // Initialiser le formulaire
     this.registerForm = this.fb.group({
-      username: ['', [Validators.required, Validators.minLength(3)]],
+      nom: ['', [Validators.required, Validators.minLength(2)]],
+      prenom: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
     
     // Rediriger si déjà connecté
     if (this.authService.isLoggedIn()) {
-      this.router.navigate(['/']);
+      this.router.navigate(['/home']);
     }
   }
 
@@ -46,10 +47,49 @@ export class RegisterComponent implements OnInit {
   get f() { return this.registerForm.controls; }
   
   onSubmit() {
-    // Afficher les détails du formulaire pour le débogage
-    console.log('Formulaire soumis:', this.registerForm.value);
-    
-    
-      };
+    if (this.registerForm.invalid || this.isSubmitting) {
+      return;
+    }
+
+    this.isSubmitting = true;
+    this.registerError = '';
+
+    const userData = {
+      nom: this.registerForm.value.nom,
+      prenom: this.registerForm.value.prenom,
+      email: this.registerForm.value.email,
+      password: this.registerForm.value.password,
+      role: 'USER' // Par défaut, tous les nouveaux utilisateurs ont le rôle USER
+    };
+
+    this.userService.register(userData)
+      .pipe(
+        finalize(() => this.isSubmitting = false)
+      )
+      .subscribe({
+        next: (response) => {
+          console.log('✅ Inscription réussie');
+          // Après inscription réussie, connecter l'utilisateur
+          this.userService.login(userData.email, userData.password)
+            .subscribe({
+              next: () => {
+                this.router.navigate(['/']);
+              },
+              error: (error) => {
+                console.error('❌ Erreur de connexion après inscription:', error);
+                this.router.navigate(['/login']);
+              }
+            });
+        },
+        error: (error: HttpErrorResponse) => {
+          console.error('❌ Erreur d\'inscription:', error);
+          if (error.status === 409) {
+            this.registerError = 'Cet email est déjà utilisé.';
+          } else {
+            this.registerError = error.error?.message || 'Une erreur est survenue lors de l\'inscription.';
+          }
+        }
+      });
   }
+}
 

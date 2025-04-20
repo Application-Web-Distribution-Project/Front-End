@@ -105,11 +105,11 @@ export class ReclamationService {
     );
   }
 
-  updateReclamationStatus(id: number, newStatus: string, comment: string): Observable<Reclamation> {
+  updateReclamationStatus(id: number, newStatus: string ): Observable<Reclamation> {
     const url = `${this.apiUrl}/${id}/status`;
     const params = new HttpParams()
       .set('newStatus', newStatus)
-      .set('comment', comment || '');
+      .set('dateResolution', new Date().toISOString());
 
     return this.http.put<Reclamation>(url, null, { 
       headers: this.getHttpOptions().headers,
