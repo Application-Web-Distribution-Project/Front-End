@@ -1,9 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ReclamationStatsComponent } from './components/pages/Reclamation/reclamation-stats/reclamation-stats.component';
+import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
-  { path: '', loadChildren: () => import('./components/pages/home/home.module').then(m => m.HomeModule), data: { breadcrumb: 'Homepage' } },
+  // Rediriger la route racine vers login
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: 'home', loadChildren: () => import('./components/pages/home/home.module').then(m => m.HomeModule), data: { breadcrumb: 'Homepage' } },
   { path: 'home-v2', loadChildren: () => import('./components/pages/hometwo/hometwo.module').then(m => m.HometwoModule), data: { breadcrumb: 'Homepage' } },
   { path: 'home-v3', loadChildren: () => import('./components/pages/homethree/homethree.module').then(m => m.HomethreeModule), data: { breadcrumb: 'Homepage' } },
   { path: 'home-v4', loadChildren: () => import('./components/pages/homefour/homefour.module').then(m => m.HomefourModule), data: { breadcrumb: 'Homepage' } },
@@ -27,15 +30,15 @@ const routes: Routes = [
   { 
     path: 'reclamations', 
     loadChildren: () => import('./components/pages/Reclamation/reclamation.module').then(m => m.ReclamationModule), 
-    data: { breadcrumb: 'Réclamations' } 
+    data: { breadcrumb: 'Réclamations' },
+    canActivate: [AuthGuard]
   },
-  { path: '', redirectTo: '/reclamations', pathMatch: 'full' },
   { path: 'error', loadChildren: () => import('./components/pages/error/error.module').then(m => m.ErrorModule), data: { breadcrumb: 'Error 404' } },
   { path: '**', loadChildren: () => import('./components/pages/error/error.module').then(m => m.ErrorModule), data: { breadcrumb: 'Error 404' } }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, { scrollPositionRestoration: 'enabled' })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

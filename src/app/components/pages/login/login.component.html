@@ -10,29 +10,63 @@
             <div class="auth-description bg-cover bg-center dark-overlay dark-overlay-2" style="background-image: url('assets/img/auth.jpg')">
                 <div class="auth-description-inner">
                     <i class="flaticon-chili"></i>
-                    <h2>Welcome Back!</h2>
-                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                    <h2>Bienvenue à nouveau !</h2>
+                    <p>Connectez-vous pour accéder à votre compte et suivre vos commandes.</p>
                 </div>
             </div>
             <div class="auth-form">
-                <h2>Log in</h2>
-                <form method="post">
+                <h2>Connexion</h2>
+                
+                <!-- Alerte d'erreur de connexion -->
+                <div *ngIf="loginError" class="alert alert-danger">
+                    {{ loginError }}
+                </div>
+                
+                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                    <!-- Email -->
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-light" placeholder="Username" name="username" value="">
+                        <input type="email" 
+                              class="form-control form-control-light" 
+                              placeholder="Email" 
+                              formControlName="email">
+                        <div *ngIf="f.email.touched && f.email.errors" class="text-danger mt-1 small">
+                            <div *ngIf="f.email.errors.required">Email est requis</div>
+                            <div *ngIf="f.email.errors.email">Email n'est pas valide</div>
+                        </div>
                     </div>
+                    
+                    <!-- Mot de passe -->
                     <div class="form-group">
-                        <input type="password" class="form-control form-control-light" placeholder="Password" name="password" value="">
+                        <input type="password" 
+                              class="form-control form-control-light" 
+                              placeholder="Mot de passe" 
+                              formControlName="password">
+                        <div *ngIf="f.password.touched && f.password.errors" class="text-danger mt-1 small">
+                            <div *ngIf="f.password.errors.required">Mot de passe est requis</div>
+                            <div *ngIf="f.password.errors.minlength">Le mot de passe doit comporter au moins 6 caractères</div>
+                        </div>
                     </div>
-                    <a href="#">Forgot Password?</a>
-                    <button type="submit" class="btn-custom primary">Login</button>
+                    
+                    <a href="#">Mot de passe oublié ?</a>
+                    
+                    <!-- Bouton de connexion avec état de chargement -->
+                    <button type="submit" 
+                           class="btn-custom primary" 
+                           [disabled]="isSubmitting || loginForm.invalid">
+                        <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>
+                        {{ isSubmitting ? 'Connexion en cours...' : 'Se connecter' }}
+                    </button>
+                    
                     <div class="auth-seperator">
-                        <span>OR</span>
+                        <span>OU</span>
                     </div>
+                    
                     <div class="social-login">
-                        <button type="button" class="ct-social-login facebook"><i class="fab fa-facebook-f"></i> Continue with Facebook </button>
-                        <button type="button" class="ct-social-login google"><i class="fab fa-google"></i> Continue with Google</button>
+                        <button type="button" class="ct-social-login facebook"><i class="fab fa-facebook-f"></i> Continuer avec Facebook </button>
+                        <button type="button" class="ct-social-login google"><i class="fab fa-google"></i> Continuer avec Google</button>
                     </div>
-                    <p>Don't have an account? <a routerLink="/register">Create One</a> </p>
+                    
+                    <p>Vous n'avez pas de compte ? <a routerLink="/register">Créez-en un</a> </p>
                 </form>
             </div>
         </div>

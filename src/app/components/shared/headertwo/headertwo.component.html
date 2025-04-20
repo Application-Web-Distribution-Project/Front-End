@@ -48,6 +48,11 @@
                 <li class="search-dropdown-wrapper search-trigger" (click)="searchToggle()">
                     <i class="flaticon-search"></i>
                 </li>
+                <!-- Bouton de déconnexion -->
+                <li class="logout-wrapper" *ngIf="isLoggedIn" (click)="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="ml-1">Déconnexion</span>
+                </li>
             </ul>
             <!-- Toggler -->
             <div class="aside-toggler aside-trigger" (click)="toggleNav()">

@@ -35,9 +35,10 @@ export class ReclamationStatsComponent implements AfterViewInit {
     });
   }
 
-  loadStats(): void {
+  // Changer de private à public
+  public loadStats(): void {
     this.loading = true;
-    this.cdr.detectChanges(); // Force view update
+    this.cdr.detectChanges();
 
     this.reclamationService.getReclamationStats().subscribe({
       next: (data: any) => {
@@ -55,7 +56,6 @@ export class ReclamationStatsComponent implements AfterViewInit {
           values: Object.values(data) as number[]
         };
 
-        // Wait for next frame to ensure canvas is ready
         requestAnimationFrame(() => {
           if (this.chartCanvas && this.chartCanvas.nativeElement) {
             this.initChart();
@@ -179,30 +179,38 @@ export class ReclamationStatsComponent implements AfterViewInit {
 
   private initChart(): void {
     try {
-      if (!this.chartCanvas) {
-        console.error('Canvas reference not found');
+      if (!this.chartCanvas || !this.statsData) {
         return;
       }
-  
+
       const canvas = this.chartCanvas.nativeElement;
       const ctx = canvas.getContext('2d');
       
-      if (!ctx || !this.statsData) {
-        console.error('Canvas context or data not available');
+      if (!ctx) {
         return;
       }
-  
-      // Force canvas dimensions
-      canvas.style.width = '100%';
-      canvas.style.height = '400px';
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-  
-      // Destroy existing chart if any
+
       if (this.chart) {
         this.chart.destroy();
       }
-  
+
+      // Créer un tableau de couleurs correspondant aux statuts
+      const backgroundColors = this.statsData.labels.map(label => 
+        this.reclamationService.getStatusColor(
+          Object.keys(this.reclamationService['labels']).find(key => 
+            this.reclamationService.getStatusLabel(key) === label
+          ) || ''
+        ) + '80' // Ajouter de la transparence
+      );
+
+      const borderColors = this.statsData.labels.map(label =>
+        this.reclamationService.getStatusColor(
+          Object.keys(this.reclamationService['labels']).find(key => 
+            this.reclamationService.getStatusLabel(key) === label
+          ) || ''
+        )
+      );
+
       this.chart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -210,18 +218,8 @@ export class ReclamationStatsComponent implements AfterViewInit {
           datasets: [{
             label: 'Nombre de réclamations',
             data: this.statsData.values,
-            backgroundColor: [
-              'rgba(255, 193, 7, 0.5)',
-              'rgba(23, 162, 184, 0.5)',
-              'rgba(40, 167, 69, 0.5)',
-              'rgba(220, 53, 69, 0.5)'
-            ],
-            borderColor: [
-              'rgb(255, 193, 7)',
-              'rgb(23, 162, 184)',
-              'rgb(40, 167, 69)',
-              'rgb(220, 53, 69)'
-            ],
+            backgroundColor: backgroundColors,
+            borderColor: borderColors,
             borderWidth: 1
           }]
         },
@@ -230,15 +228,23 @@ export class ReclamationStatsComponent implements AfterViewInit {
           maintainAspectRatio: false,
           plugins: {
             legend: {
-              display: true,
-              position: 'top'
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const value = context.raw as number;
+                  return `${value} réclamation${value > 1 ? 's' : ''}`;
+                }
+              }
             }
           },
           scales: {
             y: {
               beginAtZero: true,
               ticks: {
-                stepSize: 1
+                stepSize: 1,
+                precision: 0
               }
             }
           }
@@ -247,7 +253,6 @@ export class ReclamationStatsComponent implements AfterViewInit {
     } catch (error) {
       console.error('Error initializing chart:', error);
       this.error = "Erreur lors de l'initialisation du graphique";
-      this.cdr.detectChanges();
     }
   }
 }

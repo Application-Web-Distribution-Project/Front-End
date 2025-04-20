@@ -10,31 +10,73 @@
             <div class="auth-description bg-cover bg-center dark-overlay dark-overlay-2" style="background-image: url('assets/img/auth.jpg')">
                 <div class="auth-description-inner">
                     <i class="flaticon-chili"></i>
-                    <h2>Hello World!</h2>
-                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                    <h2>Rejoignez-nous!</h2>
+                    <p>Créez un compte pour accéder à toutes nos fonctionnalités et suivre vos commandes.</p>
                 </div>
             </div>
             <div class="auth-form">
-                <h2>Sign Up</h2>
-                <form method="post">
+                <h2>Inscription</h2>
+                
+                <!-- Alerte d'erreur d'inscription -->
+                <div *ngIf="registerError" class="alert alert-danger">
+                    {{ registerError }}
+                </div>
+                
+                <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+                    <!-- Nom d'utilisateur -->
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-light" placeholder="Username" name="username" value="">
+                        <input type="text" 
+                              class="form-control form-control-light" 
+                              placeholder="Nom d'utilisateur" 
+                              formControlName="username">
+                        <div *ngIf="f.username.touched && f.username.errors" class="text-danger mt-1 small">
+                            <div *ngIf="f.username.errors.required">Nom d'utilisateur est requis</div>
+                            <div *ngIf="f.username.errors.minlength">Le nom d'utilisateur doit comporter au moins 3 caractères</div>
+                        </div>
                     </div>
+                    
+                    <!-- Email -->
                     <div class="form-group">
-                        <input type="email" class="form-control form-control-light" placeholder="Email Address" name="email" value="">
+                        <input type="email" 
+                              class="form-control form-control-light" 
+                              placeholder="Email" 
+                              formControlName="email">
+                        <div *ngIf="f.email.touched && f.email.errors" class="text-danger mt-1 small">
+                            <div *ngIf="f.email.errors.required">Email est requis</div>
+                            <div *ngIf="f.email.errors.email">Email n'est pas valide</div>
+                        </div>
                     </div>
+                    
+                    <!-- Mot de passe -->
                     <div class="form-group">
-                        <input type="password" class="form-control form-control-light" placeholder="Password" name="password" value="">
+                        <input type="password" 
+                              class="form-control form-control-light" 
+                              placeholder="Mot de passe" 
+                              formControlName="password">
+                        <div *ngIf="f.password.touched && f.password.errors" class="text-danger mt-1 small">
+                            <div *ngIf="f.password.errors.required">Mot de passe est requis</div>
+                            <div *ngIf="f.password.errors.minlength">Le mot de passe doit comporter au moins 6 caractères</div>
+                        </div>
                     </div>
-                    <button type="submit" class="btn-custom primary">Sign Up</button>
+                    
+                    <!-- Bouton d'inscription avec état de chargement -->
+                    <button type="submit" 
+                           class="btn-custom primary" 
+                           [disabled]="isSubmitting || registerForm.invalid">
+                        <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>
+                        {{ isSubmitting ? 'Inscription en cours...' : 'S\'inscrire' }}
+                    </button>
+                    
                     <div class="auth-seperator">
-                        <span>OR</span>
+                        <span>OU</span>
                     </div>
+                    
                     <div class="social-login">
-                        <button type="button" class="ct-social-login facebook"><i class="fab fa-facebook-f"></i> Continue with Facebook </button>
-                        <button type="button" class="ct-social-login google"><i class="fab fa-google"></i> Continue with Google</button>
+                        <button type="button" class="ct-social-login facebook"><i class="fab fa-facebook-f"></i> Continuer avec Facebook </button>
+                        <button type="button" class="ct-social-login google"><i class="fab fa-google"></i> Continuer avec Google</button>
                     </div>
-                    <p>Already have an account? <a routerLink="/login">Login</a> </p>
+                    
+                    <p>Vous avez déjà un compte ? <a routerLink="/login">Connectez-vous</a> </p>
                 </form>
             </div>
         </div>

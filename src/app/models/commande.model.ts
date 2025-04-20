@@ -1,9 +1,12 @@
+import { UserDTO } from './user.model';
+
 export interface Commande {
-    id: string;  // Changé de number à string pour correspondre au MongoDB ID
-    reference: string;
-    montant: number;
-    dateCommande?: string;  // Ajout des nouveaux champs du modèle MongoDB
-    status?: string;
-    userId?: string;
-    menuIds?: string[];
-  }
+  id: string;  // ID MongoDB
+  dateCommande: string;
+  status: string;
+  userId: string;
+  menuIds: string[];
+  paymentStatus?: string;
+  paymentIntentId?: string;
+  user?: UserDTO;  // Ajout de l'utilisateur enrichi
+}

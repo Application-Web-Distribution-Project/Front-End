@@ -12,21 +12,29 @@ export class ReclamationService {
   private readonly TIMEOUT = 15000; // Increased timeout for Docker network
   private readonly RETRY_ATTEMPTS = 3; // Increased retries
 
-  private httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    })
-  };
-
   constructor(private http: HttpClient) {
     // Use relative URL to work with proxy
     this.apiUrl = '/reclamations';
   }
 
+  // Méthode pour obtenir les headers avec le token JWT
+  private getHttpOptions() {
+    // Récupérer le token depuis localStorage avec la bonne clé JWT_TOKEN
+    const token = localStorage.getItem('JWT_TOKEN');
+    
+    // Créer les headers avec le token si disponible
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    });
+
+    return { headers };
+  }
+
   getAllReclamations(): Observable<Reclamation[]> {
     console.log('🔄 Fetching reclamations from:', this.apiUrl);
-    return this.http.get<Reclamation[]>(this.apiUrl, this.httpOptions).pipe(
+    return this.http.get<Reclamation[]>(this.apiUrl, this.getHttpOptions()).pipe(
       timeout(this.TIMEOUT),
       retry(this.RETRY_ATTEMPTS),
       catchError(this.handleError.bind(this))
@@ -56,7 +64,7 @@ export class ReclamationService {
   }
 
   getReclamationById(id: number): Observable<Reclamation> {
-    return this.http.get<Reclamation>(`${this.apiUrl}/${id}`, this.httpOptions).pipe(
+    return this.http.get<Reclamation>(`${this.apiUrl}/${id}`, this.getHttpOptions()).pipe(
       timeout(this.TIMEOUT),
       retry(this.RETRY_ATTEMPTS),
       catchError(this.handleError)
@@ -71,7 +79,7 @@ export class ReclamationService {
       dateCreation: new Date().toISOString()
     };
 
-    return this.http.post<Reclamation>(this.apiUrl, payload, this.httpOptions).pipe(
+    return this.http.post<Reclamation>(this.apiUrl, payload, this.getHttpOptions()).pipe(
       timeout(this.TIMEOUT),
       catchError(error => {
         console.error('Creation error details:', error);
@@ -83,7 +91,7 @@ export class ReclamationService {
   deleteReclamation(id: number): Observable<void> {
     console.log(`🗑️ Attempting to delete reclamation ${id}`);
     return this.http.delete(`${this.apiUrl}/${id}`, {
-      headers: this.httpOptions.headers,
+      headers: this.getHttpOptions().headers,
       responseType: 'text'
     }).pipe(
       map(() => {
@@ -104,7 +112,7 @@ export class ReclamationService {
       .set('comment', comment || '');
 
     return this.http.put<Reclamation>(url, null, { 
-      headers: this.httpOptions.headers,
+      headers: this.getHttpOptions().headers,
       params: params
     }).pipe(
       timeout(this.TIMEOUT),
@@ -115,10 +123,18 @@ export class ReclamationService {
     );
   }
 
-  getReclamationStats(): Observable<Record<string, number>> {
-    return this.http.get<Record<string, number>>(`${this.apiUrl}/stats`).pipe(
-      timeout(this.TIMEOUT),
-      catchError(this.handleError)
+  getReclamationStats(): Observable<{ [key: string]: number }> {
+    return this.http.get<{ [key: string]: number }>(`${this.apiUrl}/stats`).pipe(
+      map(stats => {
+        // Assurer que tous les statuts sont présents avec au moins 0 comme valeur
+        const completeStats = {
+          'EN_ATTENTE': 0,
+          'EN_COURS': 0,
+          'RESOLU': 0,
+          ...stats
+        };
+        return completeStats;
+      })
     );
   }
 
@@ -128,29 +144,30 @@ export class ReclamationService {
     switch (status.toUpperCase()) {
       case 'EN_ATTENTE': return 'badge bg-warning';
       case 'EN_COURS': return 'badge bg-info';
-      case 'RESOLUE': return 'badge bg-success';
-      case 'REJETEE': return 'badge bg-danger';
+      case 'RESOLUE': 
+      case 'RESOLU': return 'badge bg-success';
+      case 'REJETEE': 
+      case 'REJETE': return 'badge bg-danger';
       default: return 'badge bg-secondary';
     }
   }
 
   getStatusLabel(status: string): string {
-    if (!status) return 'Inconnu';
+    const labels: { [key: string]: string } = {
+      'EN_ATTENTE': 'En attente',
+      'EN_COURS': 'En cours de traitement',
+      'RESOLU': 'Résolu'
+    };
+    return labels[status] || status;
+  }
 
-    try {
-      switch (status.toUpperCase()) {
-        case 'EN_ATTENTE': return '⏳ En attente';
-        case 'EN_COURS': return '🔄 En cours';
-        case 'RESOLUE': 
-        case 'RESOLU': return '✅ Résolue';
-        case 'REJETEE': 
-        case 'REJETE': return '❌ Rejetée';
-        default: return status;
-      }
-    } catch (error) {
-      console.error('Error in getStatusLabel:', error);
-      return 'Inconnu';
-    }
+  getStatusColor(status: string): string {
+    const colors: { [key: string]: string } = {
+      'EN_ATTENTE': '#ffc107', // jaune
+      'EN_COURS': '#17a2b8',   // bleu
+      'RESOLU': '#28a745'      // vert
+    };
+    return colors[status] || '#6c757d'; // gris par défaut
   }
 
   formatDate(date: string): string {
@@ -173,17 +190,31 @@ export class ReclamationService {
       console.error('Connection Details:', {
         error: error,
         url: this.apiUrl,
-        headers: this.httpOptions.headers
+        headers: this.getHttpOptions().headers
       });
       errorMessage = 'Erreur de connexion - Vérifiez que:\n' +
         '1. L\'API Gateway est démarré (port 8081)\n' +
         '2. Le service de réclamations est enregistré\n' +
         '3. CORS est correctement configuré';
+    } else if (error.status === 401) {
+      errorMessage = 'Session expirée ou non authentifiée. Veuillez vous reconnecter.';
+      // Rediriger vers la page de login si nécessaire
+      // this.router.navigate(['/login']);
+    } else if (error.status === 403) {
+      errorMessage = 'Accès refusé. Vous n\'avez pas les permissions nécessaires.';
     } else {
       errorMessage = `Erreur ${error.status}: ${error.error?.message || error.message}`;
     }
 
-    console.error('❌ API Error:', errorMessage);
+    // Log détaillé de l'erreur
+    console.error('API Error:', {
+      status: error.status,
+      statusText: error.statusText,
+      message: error.message,
+      url: error.url,
+      error: error.error
+    });
+
     return throwError(() => new Error(errorMessage));
   }
 }

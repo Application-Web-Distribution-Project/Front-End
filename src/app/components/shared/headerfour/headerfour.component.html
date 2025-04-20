@@ -43,6 +43,12 @@
                 </div>
                 <ul class="top-header-nav header-cta">
                     <li> <a routerLink="/menu-v1">Order Online</a> </li>
+                    <!-- Bouton de déconnexion -->
+                    <li *ngIf="isLoggedIn"> 
+                        <a href="javascript:void(0);" (click)="logout()">
+                            <i class="fas fa-sign-out-alt mr-1"></i> Déconnexion
+                        </a> 
+                    </li>
                 </ul>
             </div>
         </div>

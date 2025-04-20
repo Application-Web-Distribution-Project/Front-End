@@ -16,5 +16,14 @@
     "pathRewrite": {
       "^/commandes": "/commandes"
     }
+  },
+  "/users": {
+    "target": "http://localhost:8081",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/users": "/users"
+    }
   }
 }
