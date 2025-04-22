@@ -1,0 +1,20 @@
+/* Ensure the Order All button is visible and styled */
+.container.text-center.mt-4 {
+  margin-top: 20px;
+}
+
+.container.text-center.mt-4 .btn {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.container.text-center.mt-4 .btn:hover {
+  background-color: #0056b3;
+}

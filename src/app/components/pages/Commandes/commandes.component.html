@@ -26,17 +26,26 @@
         <!-- Error message -->
         <div class="alert alert-danger" *ngIf="!isLoading && errorMessage">
           <i class="fas fa-exclamation-circle mr-2"></i> {{ errorMessage }}
-          <button class="btn btn-sm btn-outline-danger ml-3" (click)="loadCommandes()">Réessayer</button>
+          <button
+            class="btn btn-sm btn-outline-danger ml-3"
+            (click)="loadCommandes()"
+          >
+            Réessayer
+          </button>
         </div>
 
         <!-- Orders Table -->
-        <div class="table-responsive" *ngIf="!isLoading && !errorMessage && commandes.length > 0">
+        <div
+          class="table-responsive"
+          *ngIf="!isLoading && !errorMessage && commandes.length > 0"
+        >
           <table class="table">
             <thead>
               <tr>
                 <th scope="col">Référence</th>
                 <th scope="col">Date</th>
                 <th scope="col">Statut</th>
+                <th scope="col">Paiement</th>
                 <th scope="col">Actions</th>
               </tr>
             </thead>
@@ -45,19 +54,43 @@
                 <td>{{ commande.id }}</td>
                 <td>{{ formatDate(commande.dateCommande) }}</td>
                 <td>
-                  <span class="badge" [ngClass]="getStatusBadgeClass(commande.status)">
+                  <span
+                    class="badge"
+                    [ngClass]="getStatusBadgeClass(commande.status)"
+                  >
                     {{ getStatusLabel(commande.status) }}
                   </span>
                 </td>
                 <td>
-                  <button class="btn-custom primary btn-sm mr-2" (click)="openDetails(commandeDetails, commande)">
+                  <span
+                    class="badge"
+                    [ngClass]="
+                      commande.paymentStatus === 'PAID'
+                        ? 'badge-success'
+                        : 'badge-warning'
+                    "
+                  >
+                    {{ commande.paymentStatus === "PAID" }}
+                  </span>
+                </td>
+                <td>
+                  <button
+                    class="btn-custom primary btn-sm mr-2"
+                    (click)="openDetails(commandeDetails, commande)"
+                  >
                     <i class="fas fa-eye mr-1"></i> Détails
                   </button>
-                  <button 
-                    *ngIf="canBeCancelled(commande.status)" 
-                    class="btn-custom danger btn-sm"
-                    (click)="cancelOrder(commande.id)">
-                    <i class="fas fa-times mr-1"></i> Annuler
+                  <button
+                    class="btn-custom danger btn-sm mr-2"
+                    (click)="deleteCommande(commande.id)"
+                  >
+                    <i class="fas fa-trash-alt mr-1"></i> Supprimer
+                  </button>
+                  <button
+                    class="btn-custom secondary btn-sm"
+                    (click)="openEditModal(editCommandeModal, commande)"
+                  >
+                    <i class="fas fa-edit mr-1"></i> Modifier
                   </button>
                 </td>
               </tr>
@@ -66,13 +99,14 @@
         </div>
 
         <!-- Empty state when no orders -->
-        <div class="text-center p-5" *ngIf="!isLoading && !errorMessage && commandes.length === 0">
+        <div
+          class="text-center p-5"
+          *ngIf="!isLoading && !errorMessage && commandes.length === 0"
+        >
           <i class="fas fa-pizza-slice fa-3x mb-3"></i>
           <h5>Vous n'avez pas encore passé de commande</h5>
           <p>Pourquoi ne pas consulter notre menu et commander maintenant ?</p>
-          <a routerLink="/menu-v1" class="btn-custom primary">
-            Voir le Menu
-          </a>
+          <a routerLink="/menu-v1" class="btn-custom primary"> Voir le Menu </a>
         </div>
       </div>
     </div>
@@ -82,22 +116,36 @@
 <!-- Order Details Modal -->
 <ng-template #commandeDetails let-modal>
   <div class="modal-header">
-    <h5 class="modal-title">Détails de la commande #{{ selectedCommande?.id }}</h5>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+    <h5 class="modal-title">
+      Détails de la commande #{{ selectedCommande?.id }}
+    </h5>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    >
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body" *ngIf="selectedCommande">
     <div class="row">
       <div class="col-md-6">
-        <p><strong>Date:</strong> {{ formatDate(selectedCommande.dateCommande) }}</p>
+        <p>
+          <strong>Date:</strong> {{ formatDate(selectedCommande.dateCommande) }}
+        </p>
         <p *ngIf="selectedCommande.user">
-          <strong>Client:</strong> {{ selectedCommande.user.nom }} {{ selectedCommande.user.prenom }}
+          <strong>Client:</strong> {{ selectedCommande.user.nom }}
+          {{ selectedCommande.user.prenom }}
         </p>
       </div>
       <div class="col-md-6 text-md-right">
-        <p><strong>Statut:</strong> 
-          <span class="badge" [ngClass]="getStatusBadgeClass(selectedCommande.status)">
+        <p>
+          <strong>Statut:</strong>
+          <span
+            class="badge"
+            [ngClass]="getStatusBadgeClass(selectedCommande.status)"
+          >
             {{ getStatusLabel(selectedCommande.status) }}
           </span>
         </p>
@@ -106,38 +154,125 @@
         </p>
       </div>
     </div>
-    
-    <hr>
-    
+
+    <hr />
+
     <h6 class="mb-3">Articles commandés</h6>
-    <ul class="list-group mb-3" *ngIf="selectedCommande.menuIds && selectedCommande.menuIds.length > 0">
-      <li class="list-group-item" *ngFor="let menuId of selectedCommande.menuIds">
+    <ul
+      class="list-group mb-3"
+      *ngIf="selectedCommande.menuIds && selectedCommande.menuIds.length > 0"
+    >
+      <li
+        class="list-group-item"
+        *ngFor="let menuId of selectedCommande.menuIds"
+      >
         Menu ID: {{ menuId }}
       </li>
     </ul>
-    <p *ngIf="!selectedCommande.menuIds || selectedCommande.menuIds.length === 0" class="text-muted">
+    <p
+      *ngIf="!selectedCommande.menuIds || selectedCommande.menuIds.length === 0"
+      class="text-muted"
+    >
       Aucun article dans cette commande.
     </p>
-    
+
     <div *ngIf="selectedCommande.status !== 'LIVREE'" class="alert alert-info">
-      <p class="mb-0"><i class="fas fa-info-circle mr-2"></i> Le statut de votre commande est mis à jour en temps réel.</p>
+      <p class="mb-0">
+        <i class="fas fa-info-circle mr-2"></i> Le statut de votre commande est
+        mis à jour en temps réel.
+      </p>
     </div>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-sm btn-secondary" (click)="modal.close('Close click')">Fermer</button>
-    <button 
-      type="button" 
+    <button
+      type="button"
+      class="btn btn-sm btn-secondary"
+      (click)="modal.close('Close click')"
+    >
+      Fermer
+    </button>
+    <button
+      type="button"
       class="btn-custom danger btn-sm"
       *ngIf="canBeCancelled(selectedCommande?.status)"
-      (click)="cancelOrder(selectedCommande!.id); modal.close('Order cancelled')">
+      (click)="
+        cancelOrder(selectedCommande!.id); modal.close('Order cancelled')
+      "
+    >
       Annuler la commande
     </button>
-    <button 
-      type="button" 
-      class="btn-custom primary btn-sm" 
+    <button
+      type="button"
+      class="btn-custom primary btn-sm"
       *ngIf="canBeReordered(selectedCommande?.status)"
-      routerLink="/menu-v1">
+      routerLink="/menu-v1"
+    >
       Commander à nouveau
+    </button>
+  </div>
+</ng-template>
+
+<!-- Edit Command Modal -->
+<ng-template #editCommandeModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">
+      Modifier la commande #{{ selectedCommande?.id }}
+    </h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <form #editForm="ngForm">
+      <div class="mb-3">
+        <label for="status" class="form-label">Statut</label>
+        <select
+          id="status"
+          class="form-control"
+          [(ngModel)]="selectedCommande!.status"
+          name="status"
+          required
+        >
+          <option value="EN_ATTENTE">En attente</option>
+          <option value="EN_PREPARATION">En préparation</option>
+          <option value="PRET">Prêt</option>
+          <option value="LIVREE">Livrée</option>
+          <option value="ANNULEE">Annulée</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="paymentStatus" class="form-label">Statut du paiement</label>
+        <select
+          id="paymentStatus"
+          class="form-control"
+          [(ngModel)]="selectedCommande!.paymentStatus"
+          name="paymentStatus"
+          required
+        >
+          <option value="PAID">Payé</option>
+          <option value="PENDING">En attente</option>
+        </select>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="modal.dismiss('Close click')"
+    >
+      Annuler
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="!editForm.valid"
+      (click)="saveEditedCommande(modal)"
+    >
+      Enregistrer
     </button>
   </div>
 </ng-template>

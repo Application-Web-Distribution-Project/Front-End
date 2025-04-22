@@ -1,0 +1,293 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div *ngIf="invoiceData" class="invoice-container">
+        <!-- Invoice Header -->
+        <div
+          class="invoice-header d-flex justify-content-between align-items-center mb-4"
+        >
+          <div class="company-info">
+            <h2 class="mb-0">INVOICE</h2>
+            <p class="text-muted mb-0">Your Restaurant Name</p>
+          </div>
+          <div class="invoice-meta text-end">
+            <h5 class="mb-0">
+              Invoice #{{ invoiceData.invoiceNumber || "000001" }}
+            </h5>
+            <p class="text-muted mb-0">
+              Date: {{ invoiceData.date || (today | date : "mediumDate") }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card shadow border-0 invoice-card">
+          <!-- Customer Info Section -->
+          <div class="card-header bg-white py-3 border-bottom border-light">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-uppercase text-muted mb-2">Billed To</h6>
+                <div class="customer-info">
+                  <h5 class="mb-1">
+                    {{ invoiceData.customer?.name || "Guest Customer" }}
+                  </h5>
+                  <p class="mb-0">
+                    {{ invoiceData.customer?.address || "Walk-in Customer" }}
+                  </p>
+                  <p class="mb-0">{{ invoiceData.customer?.phone || "" }}</p>
+                </div>
+              </div>
+              <div class="col-md-6 text-md-end">
+                <h6 class="text-uppercase text-muted mb-2">Order Info</h6>
+                <p class="mb-1">
+                  <span class="text-muted">Order #:</span>
+                  {{ invoiceData.orderNumber || "000001" }}
+                </p>
+                <p class="mb-1">
+                  <span class="text-muted">Order Date:</span>
+                  {{ invoiceData.orderDate || (today | date : "short") }}
+                </p>
+                <p class="mb-0">
+                  <span class="text-muted">Payment Method:</span>
+                  {{ invoiceData.paymentMethod || "Card" }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body p-4">
+            <!-- Order Items Table -->
+            <div class="table-responsive">
+              <table class="table table-borderless invoice-table">
+                <thead>
+                  <tr class="bg-light">
+                    <th scope="col" class="text-center" style="width: 5%">#</th>
+                    <th scope="col" style="width: 40%">Item</th>
+                    <th scope="col" style="width: 35%">Description</th>
+                    <th scope="col" class="text-end" style="width: 20%">
+                      Price (TND)
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="let item of invoiceData.items; let i = index"
+                    class="invoice-item"
+                  >
+                    <td class="text-center align-middle">{{ i + 1 }}</td>
+                    <td class="align-middle">
+                      <h6 class="mb-0">{{ item.name }}</h6>
+                    </td>
+                    <td class="align-middle text-muted">
+                      {{ item.description }}
+                    </td>
+                    <td class="text-end align-middle">{{ item.price }} TND</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Summary Section -->
+            <div class="invoice-summary mt-4">
+              <div class="row">
+                <div class="col-md-7">
+                  <div class="invoice-notes p-3 bg-light rounded">
+                    <h6 class="mb-2">Notes</h6>
+                    <p class="mb-0 small">
+                      {{
+                        invoiceData.notes ||
+                          "Thank you for your business! Please contact us for any questions regarding this invoice."
+                      }}
+                    </p>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="invoice-totals p-3 border rounded">
+                    <div class="d-flex justify-content-between mb-2">
+                      <span>Subtotal</span>
+                      <span>{{ getSubtotal() }} TND</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                      <span>Tax ({{ invoiceData.taxRate || "7" }}%)</span>
+                      <span>{{ getTax() }} TND</span>
+                    </div>
+                    <div class="d-flex justify-content-between pt-2 border-top">
+                      <span class="fw-bold">Total</span>
+                      <span class="fw-bold fs-5">{{ getTotal() }} TND</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer / Payment Section -->
+          <div class="card-footer bg-white py-3 border-top border-light">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3 mb-md-0">
+                  <h6 class="text-uppercase text-muted mb-2">
+                    Payment Methods
+                  </h6>
+                  <div class="payment-methods">
+                    <span class="badge bg-primary me-2">Visa</span>
+                    <span class="badge bg-primary me-2">MasterCard</span>
+                    <span class="badge bg-primary me-2">PayPal</span>
+                    <span class="badge bg-primary">Cash</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 text-md-end">
+                <button
+                  class="btn btn-primary btn-lg px-5"
+                  (click)="openPaymentModal(paymentModal)"
+                >
+                  <i class="fas fa-credit-card me-2"></i> Proceed to Payment
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Modal -->
+        <ng-template #paymentModal let-modal>
+          <div class="modal-header">
+            <h5 class="modal-title">Enter Payment Details</h5>
+            <button
+              type="button"
+              class="btn-close"
+              (click)="modal.dismiss()"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form #paymentForm="ngForm">
+              <div class="mb-3">
+                <label for="cardholderName" class="form-label"
+                  >Cardholder Name</label
+                >
+                <input
+                  type="text"
+                  id="cardholderName"
+                  class="form-control"
+                  [ngClass]="{ 'is-invalid': formSubmitted && !cardholderName }"
+                  [(ngModel)]="cardholderName"
+                  name="cardholderName"
+                  required
+                />
+                <div
+                  *ngIf="formSubmitted && !cardholderName"
+                  class="invalid-feedback"
+                >
+                  Cardholder name is required.
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="cardNumberElement" class="form-label"
+                  >Card Number</label
+                >
+                <div
+                  id="cardNumberElement"
+                  class="form-control"
+                  [ngClass]="{
+                    'is-invalid': formSubmitted && !isCardNumberComplete
+                  }"
+                ></div>
+                <div
+                  *ngIf="formSubmitted && !isCardNumberComplete"
+                  class="invalid-feedback"
+                >
+                  Please enter a valid card number.
+                </div>
+                <div *ngIf="cardNumberError" class="text-danger small mt-1">
+                  {{ cardNumberError }}
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="cardExpiryElement" class="form-label"
+                    >Expiration Date</label
+                  >
+                  <div
+                    id="cardExpiryElement"
+                    class="form-control"
+                    [ngClass]="{
+                      'is-invalid': formSubmitted && !isCardExpiryComplete
+                    }"
+                  ></div>
+                  <div
+                    *ngIf="formSubmitted && !isCardExpiryComplete"
+                    class="invalid-feedback"
+                  >
+                    Please enter a valid expiration date.
+                  </div>
+                  <div *ngIf="cardExpiryError" class="text-danger small mt-1">
+                    {{ cardExpiryError }}
+                  </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="cardCvcElement" class="form-label">CVV</label>
+                  <div
+                    id="cardCvcElement"
+                    class="form-control"
+                    [ngClass]="{
+                      'is-invalid': formSubmitted && !isCardCvcComplete
+                    }"
+                  ></div>
+                  <div
+                    *ngIf="formSubmitted && !isCardCvcComplete"
+                    class="invalid-feedback"
+                  >
+                    Please enter a valid security code.
+                  </div>
+                  <div *ngIf="cardCvcError" class="text-danger small mt-1">
+                    {{ cardCvcError }}
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="isLoading" class="text-center mt-3">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="modal.dismiss()"
+              [disabled]="isLoading"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              (click)="processPayment(modal, paymentForm)"
+              [disabled]="isLoading"
+            >
+              Pay {{ getTotal() }} TND
+            </button>
+          </div>
+        </ng-template>
+
+        <!-- Footer Signature Section -->
+        <div class="invoice-footer mt-4 text-center">
+          <p class="mb-0 text-muted small">
+            This is a computer generated invoice and doesn't require physical
+            signature.
+          </p>
+        </div>
+      </div>
+
+      <!-- No Invoice Data Alert -->
+      <div *ngIf="!invoiceData" class="alert alert-warning text-center p-5">
+        <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+        <h4>No Invoice Data Available</h4>
+        <p class="mb-0">
+          Please select items from the menu to generate an invoice.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
