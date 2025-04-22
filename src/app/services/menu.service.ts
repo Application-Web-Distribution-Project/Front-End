@@ -8,7 +8,7 @@ import { catchError } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class MenuService {
-  private baseUrl = 'http://localhost:8081/menus';
+  private baseUrl = '/menus';
 
   constructor(private http: HttpClient) {}
 

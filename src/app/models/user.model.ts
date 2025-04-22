@@ -5,3 +5,11 @@ export interface User {
     email: string;
     role: string; // Ajouté pour les autorisations
 }
+
+// Data Transfer Object pour les utilisateurs référencés dans d'autres entités
+export interface UserDTO {
+    id: string;
+    nom: string;
+    prenom: string;
+    email: string;
+}

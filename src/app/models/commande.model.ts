@@ -8,5 +8,5 @@ export interface Commande {
   menuIds: string[];
   paymentStatus?: string;
   paymentIntentId?: string;
-  user?: UserDTO;  // User details from enrichment
+  user: UserDTO;  // Changed from optional to required since it's accessed directly in the template
 }
