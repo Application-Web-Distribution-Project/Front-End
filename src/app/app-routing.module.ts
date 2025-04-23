@@ -64,7 +64,13 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   // Les routes publiques
-  { path: 'menu-v1', component: MenuListComponent },
+  // Change from public to protected route
+  {
+    path: 'menu-v1',
+    component: MenuListComponent,
+    canActivate: [AuthGuard], // Add this line to protect the route
+    data: { breadcrumb: 'Menu v1' }, // Optional: for consistency with other routes
+  },
   {
     path: 'blog-grid',
     loadChildren: () =>

@@ -8,7 +8,6 @@ import {
 import {
   loadStripe,
   Stripe,
-  StripeCardElement,
   StripeCardNumberElement,
   StripeCardExpiryElement,
   StripeCardCvcElement,
@@ -17,6 +16,8 @@ import { HttpClient } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 import { CommandeService } from '../../../services/commande.service';
+import { catchError, finalize } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-invoice',
@@ -31,6 +32,9 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
   cardNumber: StripeCardNumberElement | null = null;
   cardExpiry: StripeCardExpiryElement | null = null;
   cardCvc: StripeCardCvcElement | null = null;
+
+  // Flag to prevent multiple command creation
+  isCommandCreated = false;
 
   // Track validation for all card fields
   isCardNumberComplete = false;
@@ -54,7 +58,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
     private http: HttpClient,
     private modalService: NgbModal,
     private router: Router,
-    private commandeService: CommandeService // Inject CommandeService
+    private commandeService: CommandeService
   ) {}
 
   ngOnInit(): void {
@@ -73,7 +77,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
     this.initializeStripeElements();
   }
 
-  // Initialize Stripe elements - moved to a separate method so we can call it when the modal opens
+  // Initialize Stripe elements
   initializeStripeElements(): void {
     if (this.stripe) {
       const elements = this.stripe.elements();
@@ -154,6 +158,9 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
   }
 
   openPaymentModal(content: any): void {
+    // Reset the command creation flag
+    this.isCommandCreated = false;
+
     this.formSubmitted = false;
     this.cardholderName = '';
     this.isLoading = false;
@@ -199,18 +206,14 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
     return true;
   }
 
+  // Modified method with correct status values
   processPayment(modal: any, form: any): void {
-    // Display the success popup immediately
-    const successPopup = confirm(
-      'Paiement réussi ! Vous allez être redirigé vers vos commandes.'
-    );
-
-    if (successPopup) {
-      // Redirect to the "Commandes" page
-      this.router.navigate(['/commande']);
+    // Prevent multiple submissions
+    if (this.isLoading || this.isCommandCreated) {
+      return;
     }
 
-    // Keep all existing functionality
+    // Validate form
     if (!this.validateForm()) {
       alert('Veuillez remplir tous les champs requis.');
       return;
@@ -218,89 +221,42 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
 
     this.isLoading = true;
 
-    // Create the command first
+    // Create command with status "EN_ATTENTE" and payment status "PAID"
     const command = {
       dateCommande: new Date().toISOString(),
-      status: 'EN_COURS',
+      status: 'EN_ATTENTE', // Use "EN_ATTENTE" instead of "PAID"
       menuIds: this.invoiceData.items.map((item: any) => item.id),
-      paymentStatus: 'PENDING',
-      paymentIntentId: null, // Initially null, will be updated after payment
+      paymentStatus: 'PAID', // Keep payment status as "PAID"
+      paymentIntentId: 'pi_dummy_' + new Date().getTime(), // Generate dummy payment ID
     };
 
-    this.commandeService.createCommande(command).subscribe({
-      next: (createdCommand) => {
-        console.log('✅ Commande créée avec succès:', createdCommand);
+    // Set flag to prevent duplicate commands
+    this.isCommandCreated = true;
 
-        // Simulate payment processing
-        setTimeout(() => {
+    // Create the command
+    this.commandeService
+      .createCommande(command)
+      .pipe(
+        catchError((error) => {
+          console.error('❌ Erreur lors de la création de la commande:', error);
+          return of(null); // Return null on error
+        }),
+        finalize(() => {
           this.isLoading = false;
-          alert('Paiement réussi. Mise à jour de la commande...');
+          modal.close();
 
-          // Update the command with payment details
-          createdCommand.paymentStatus = 'PAID';
-          createdCommand.paymentIntentId =
-            this.invoiceData.paymentIntentId || 'pi_dummy';
-
-          this.commandeService
-            .updateCommande(createdCommand.id, createdCommand)
-            .subscribe({
-              next: (updatedCommand) => {
-                console.log(
-                  '✅ Commande mise à jour avec succès:',
-                  updatedCommand
-                );
-                modal.close();
-                this.router.navigate(['/commande']); // Redirect to the "Commandes" page
-              },
-              error: (err) => {
-                console.error(
-                  '❌ Erreur lors de la mise à jour de la commande:',
-                  err
-                );
-              },
-            });
-        }, 2000); // Simulate a delay for payment processing
-      },
-      error: (err) => {
-        this.isLoading = false;
-      },
-    });
-  }
-
-  saveCommandAndNavigate(): void {
-    const command = {
-      dateCommande: new Date().toISOString(), // Use current date/time
-      status: 'PAID', // Match the status from the provided POST method
-      menuIds: this.invoiceData.items.map((item: any) => item.id), // Extract menu IDs
-      paymentStatus: 'PAID', // Match the payment status from the provided POST method
-      paymentIntentId: this.invoiceData.paymentIntentId || null, // Include paymentIntentId
-    };
-
-    console.log('📦 Creating command with the following data:', command); // Log command data
-
-    this.commandeService.createCommande(command).subscribe({
-      next: () => {
-        console.log('✅ payment successfully.');
-        this.router.navigate(['/commande']); // Redirect to commandes page
-      },
-      error: (err) => {
-        console.error('Command created successfully', err);
-      },
-    });
-  }
-
-  saveCommand(status: string): void {
-    const command = {
-      id: this.invoiceData.orderNumber || '12345',
-      dateCommande: new Date().toISOString(),
-      status: status,
-      userId: this.invoiceData.customer?.id || 'guest',
-      menuIds: this.invoiceData.items.map((item: any) => item.id),
-      paymentStatus: status,
-    };
-
-    this.http.post('/commandes', command).subscribe({
-      next: () => console.log('Command saved successfully.'),
-    });
+          // Show success message and redirect
+          /*alert(
+            'Paiement réussi ! Vous allez être redirigé vers vos commandes.'
+          );*/
+          this.router.navigate(['/commande']);
+        })
+      )
+      .subscribe((result) => {
+        if (result) {
+          console.log('✅ Commande créée avec succès:', result);
+        }
+        // Note: redirect happens in finalize, so it occurs whether the API call succeeds or fails
+      });
   }
 }
