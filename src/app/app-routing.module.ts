@@ -20,12 +20,14 @@ const routes: Routes = [
     data: { breadcrumb: 'Login' },
     canActivate: [NonAuthGuard],
   },
-  {
-    path: 'register',
-    loadChildren: () =>
-      import('./components/pages/register/register.module').then(
-        (m) => m.RegisterModule
-      ),
+  { 
+    path: 'reset-password', 
+    loadChildren: () => import('./components/pages/reset-password/reset-password.module').then(m => m.ResetPasswordModule), 
+    data: { breadcrumb: 'Reset Password' }
+  },
+  { 
+    path: 'register', 
+    loadChildren: () => import('./components/pages/register/register.module').then(m => m.RegisterModule), 
     data: { breadcrumb: 'Register' },
     canActivate: [NonAuthGuard],
   },

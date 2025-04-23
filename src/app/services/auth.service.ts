@@ -5,6 +5,7 @@ import { tap, catchError, timeout } from 'rxjs/operators';
 import { LoginRequest } from '../models/login-request.model';
 import { JwtResponse } from '../models/jwt-response.model';
 import { User } from '../models/user.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -14,12 +15,18 @@ export class AuthService {
   private readonly USER_DATA = 'USER_DATA';
   private readonly REQUEST_TIMEOUT = 15000; // 15 secondes de timeout
   
+  // Fix the environment.apiUrl access
+  private apiBaseUrl = ''; // Default to empty string for relative paths
+  
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser$: Observable<User | null>;
   private isLoggedInSubject = new BehaviorSubject<boolean>(false);
   public isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
   constructor(private http: HttpClient) {
+    // Initialize API base URL
+    this.apiBaseUrl = environment.apiUrl || '';
+    
     // Initialiser l'utilisateur à partir du localStorage au démarrage
     const userData = this.getUserFromStorage();
     this.currentUserSubject = new BehaviorSubject<User | null>(userData);
@@ -149,5 +156,23 @@ export class AuthService {
     
     console.error('❌ Auth Service - Erreur formatée:', errorMessage);
     return throwError(() => new Error(errorMessage));
+  }
+
+  requestPasswordReset(email: string): Observable<any> {
+    return this.http.post(`${this.apiBaseUrl}/users/forgot-password`, { email })
+      .pipe(catchError(this.handleError));
+  }
+
+  validateResetToken(token: string): Observable<any> {
+    return this.http.get(`${this.apiBaseUrl}/users/reset-password/validate?token=${token}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  resetPassword(token: string, newPassword: string, confirmPassword: string): Observable<any> {
+    return this.http.post(`${this.apiBaseUrl}/users/reset-password`, { 
+      token, 
+      newPassword,
+      confirmPassword
+    }).pipe(catchError(this.handleError));
   }
 }

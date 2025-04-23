@@ -34,5 +34,6 @@
     "pathRewrite": {
       "^/menus": "/menus"
     }
+ 
   }
 }
