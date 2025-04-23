@@ -10,15 +10,12 @@ import { AppComponent } from './app.component';
 import { PreloaderComponent } from './preloader/preloader.component';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
-import { SharedModule } from "./components/shared/shared.module";
+import { SharedModule } from './components/shared/shared.module';
 import { MenuListComponent } from './components/pages/menu/menulist/menulist.component';
+import { InvoiceModule } from './components/pages/invoice/invoice.module';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    PreloaderComponent,
-    MenuListComponent
-  ],
+  declarations: [AppComponent, PreloaderComponent, MenuListComponent],
   imports: [
     BrowserModule,
     FormsModule,
@@ -28,12 +25,13 @@ import { MenuListComponent } from './components/pages/menu/menulist/menulist.com
     BrowserAnimationsModule,
     BreadcrumbModule,
     NgbModule,
-    SharedModule
-],
+    SharedModule,
+    InvoiceModule,
+  ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

@@ -2,7 +2,7 @@
 <app-breadcrumb></app-breadcrumb>
 
 <!-- Weather and Recipe Tools Section -->
-<div class="container mb-4">
+<div *ngIf="userRole === 'USER'" class="container mb-4">
   <div class="card shadow mb-4">
     <div class="card-header">
       <h4 class="mb-0">Weather-Based Menu Recommendations</h4>
@@ -76,7 +76,10 @@
         *ngIf="similarRecipes && similarRecipes.results?.length > 0"
         class="row mt-3"
       >
-        <div class="col-md-4 mb-3" *ngFor="let recipe of similarRecipes.results">
+        <div
+          class="col-md-4 mb-3"
+          *ngFor="let recipe of similarRecipes.results"
+        >
           <div class="card h-100">
             <img
               *ngIf="recipe.image"
@@ -186,6 +189,7 @@
     </div>
   </div>
 </div>
+
 <!-- Add this after the tab content -->
 <input type="hidden" id="recipeId" />
 <button
@@ -194,10 +198,17 @@
   (click)="processNutritionRequest()"
 ></button>
 <!-- Add Menu Button -->
+<!-- Add it right after the "Add New Menu Item" button that's already working -->
 <div class="container mb-4">
-  <button class="btn-custom add-menu-btn" (click)="openAddMenuModal(addMenuModal)">
-    <i class="fas fa-plus mr-2"></i> Add New Menu Item
-  </button>
+  <!-- Add Menu Button (Visible only to ADMIN) -->
+  <div *ngIf="canAdd()" class="mb-4">
+    <button
+      class="btn-custom add-menu-btn"
+      (click)="openAddMenuModal(addMenuModal)"
+    >
+      <i class="fas fa-plus mr-2"></i> Add New Menu Item
+    </button>
+  </div>
 </div>
 
 <!-- Menu Wrapper Start -->
@@ -207,23 +218,31 @@
       <!-- Product Start -->
       <div class="col-lg-4 col-md-6" *ngFor="let menu of menus">
         <div class="product">
-          <a class="product-thumb"> 
-            <img [src]="getMenuImage(menu.id)" alt="{{menu.name}}" /> 
+          <a class="product-thumb">
+            <img [src]="getMenuImage(menu.id)" alt="{{ menu.name }}" />
           </a>
-          <!-- Menu Action Buttons -->
-          <div class="menu-actions">
-            <button class="action-btn edit-btn" (click)="openEditMenuModal(menu, editMenuModal)">
+          <!-- Menu Action Buttons (Visible only to ADMIN) -->
+          <div class="menu-actions" *ngIf="canEdit()">
+            <button
+              class="action-btn edit-btn"
+              (click)="openEditMenuModal(menu, editMenuModal)"
+            >
               <i class="fas fa-edit"></i>
             </button>
-            <button class="action-btn delete-btn" (click)="confirmDelete(menu.id)">
+            <button
+              class="action-btn delete-btn"
+              (click)="confirmDelete(menu.id)"
+            >
               <i class="fas fa-times"></i>
             </button>
           </div>
           <div class="product-body">
             <div class="product-desc">
-              <h4> <a>{{menu.name}}</a> </h4>
-              <p>{{menu.description}}</p>
-              <p class="product-price">{{menu.price}} TND</p>
+              <h4>
+                <a>{{ menu.name }}</a>
+              </h4>
+              <p>{{ menu.description }}</p>
+              <p class="product-price">{{ menu.price }} TND</p>
               <div class="favorite">
                 <i class="far fa-heart"></i>
               </div>
@@ -232,7 +251,11 @@
               <a class="order-item btn-custom btn-sm shadow-none">
                 Order <i class="fas fa-shopping-cart"></i>
               </a>
-              <button type="button" class="btn-custom secondary btn-sm shadow-none" (click)="open(shopmodal, menu)">
+              <button
+                type="button"
+                class="btn-custom secondary btn-sm shadow-none"
+                (click)="open(shopmodal, menu)"
+              >
                 Customize <i class="fas fa-plus"></i>
               </button>
             </div>
@@ -257,21 +280,48 @@
     <form #addForm="ngForm">
       <div class="form-group">
         <label>Name</label>
-        <input type="text" class="form-control" name="name" [(ngModel)]="newMenu.name" required>
+        <input
+          type="text"
+          class="form-control"
+          name="name"
+          [(ngModel)]="newMenu.name"
+          required
+        />
       </div>
       <div class="form-group">
         <label>Description</label>
-        <textarea class="form-control" name="description" [(ngModel)]="newMenu.description" required></textarea>
+        <textarea
+          class="form-control"
+          name="description"
+          [(ngModel)]="newMenu.description"
+          required
+        ></textarea>
       </div>
       <div class="form-group">
         <label>Price (TND)</label>
-        <input type="number" class="form-control" name="price" [(ngModel)]="newMenu.price" required min="0">
+        <input
+          type="number"
+          class="form-control"
+          name="price"
+          [(ngModel)]="newMenu.price"
+          required
+          min="0"
+        />
       </div>
     </form>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
-    <button type="button" class="btn btn-custom" (click)="addMenu(); modal.close()" [disabled]="!addForm.valid">Add Item</button>
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="btn btn-custom"
+      (click)="addMenu(); modal.close()"
+      [disabled]="!addForm.valid"
+    >
+      Add Item
+    </button>
   </div>
 </ng-template>
 
@@ -287,46 +337,102 @@
     <form #editForm="ngForm">
       <div class="form-group">
         <label>Name</label>
-        <input type="text" class="form-control" name="name" [(ngModel)]="editMenu.name" required>
+        <input
+          type="text"
+          class="form-control"
+          name="name"
+          [(ngModel)]="editMenu.name"
+          required
+        />
       </div>
       <div class="form-group">
         <label>Description</label>
-        <textarea class="form-control" name="description" [(ngModel)]="editMenu.description" required></textarea>
+        <textarea
+          class="form-control"
+          name="description"
+          [(ngModel)]="editMenu.description"
+          required
+        ></textarea>
       </div>
       <div class="form-group">
         <label>Price (TND)</label>
-        <input type="number" class="form-control" name="price" [(ngModel)]="editMenu.price" required min="0">
+        <input
+          type="number"
+          class="form-control"
+          name="price"
+          [(ngModel)]="editMenu.price"
+          required
+          min="0"
+        />
       </div>
     </form>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
-    <button type="button" class="btn btn-custom" (click)="updateMenu(); modal.close()" [disabled]="!editForm.valid">Save Changes</button>
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="btn btn-custom"
+      (click)="updateMenu(); modal.close()"
+      [disabled]="!editForm.valid"
+    >
+      Save Changes
+    </button>
   </div>
 </ng-template>
 
 <!-- Customize Modal -->
 <ng-template #shopmodal let-modal>
-  <button type="button" class="close-btn" (click)="modal.dismiss('Cross click')">
+  <button
+    type="button"
+    class="close-btn"
+    (click)="modal.dismiss('Cross click')"
+  >
     <span></span>
-    <span></span> 
+    <span></span>
   </button>
-  <div class="modal-header modal-bg" [style.backgroundImage]="'url(' + modalContent.img + ')'"></div>
+  <div
+    class="modal-header modal-bg"
+    [style.backgroundImage]="'url(' + modalContent.img + ')'"
+  ></div>
   <div class="modal-body">
     <div class="customize-meta">
-      <h4 class="customize-title">{{modalContent.name}} <span class="custom-primary">{{modalContent.price}} TND</span></h4>
-      <p>{{modalContent.description}}</p>
+      <h4 class="customize-title">
+        {{ modalContent.name }}
+        <span class="custom-primary">{{ modalContent.price }} TND</span>
+      </h4>
+      <p>{{ modalContent.description }}</p>
     </div>
     <div class="customize-controls">
       <div class="qty">
-        <span class="qty-subtract" (click)="decreaseQuantity()"><i class="fas fa-minus"></i></span>
-        <input type="text" name="qty" [(ngModel)]="quantity" readonly>
-        <span class="qty-add" (click)="increaseQuantity()"><i class="fas fa-plus"></i></span>
+        <span class="qty-subtract" (click)="decreaseQuantity()"
+          ><i class="fas fa-minus"></i
+        ></span>
+        <input type="text" name="qty" [(ngModel)]="quantity" readonly />
+        <span class="qty-add" (click)="increaseQuantity()"
+          ><i class="fas fa-plus"></i
+        ></span>
       </div>
       <div class="customize-total">
-        <h5>Total Price: <span class="final-price custom-primary">{{calculateTotal()}} <span>TND</span></span></h5>
+        <h5>
+          Total Price:
+          <span class="final-price custom-primary"
+            >{{ calculateTotal() }} <span>TND</span></span
+          >
+        </h5>
       </div>
     </div>
     <button type="button" class="btn-custom btn-block">Order Now</button>
   </div>
 </ng-template>
+<!-- Order All Menu Button (Visible to both ADMIN and USER) -->
+<div
+  *ngIf="userRole === 'USER' && canViewPayment()"
+  class="mb-4 d-flex justify-content-center align-items-center"
+  style="min-height: 50vh"
+>
+  <button class="btn-custom add-menu-btn" (click)="orderAllMenu()">
+    <i class="fas fa-shopping-cart mr-2"></i> Order All Menu
+  </button>
+</div>

@@ -8,6 +8,8 @@ import {
 import { MenuService } from '../../../../services/menu.service';
 import { Menu } from '../../../../models/menu.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode'; // Correctly import jwtDecode
 
 // jQuery declaration for TypeScript
 declare var $: any;
@@ -48,13 +50,57 @@ export class MenuListComponent implements OnInit {
   nutritionLoading: boolean = false;
   @ViewChild('nutritionModal') nutritionModal: TemplateRef<any>;
 
+  userRole: string = ''; // Store the user's role
+
   constructor(
     private menuService: MenuService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.loadMenus();
+    this.decodeUserRole();
+  }
+
+  // Decode the JWT token to get the user's role
+  decodeUserRole(): void {
+    const token = localStorage.getItem('JWT_TOKEN');
+    if (token) {
+      try {
+        const decodedToken: any = jwtDecode(token); // Use jwtDecode as a named import
+        this.userRole = decodedToken.role || '';
+      } catch (error) {
+        console.error('Error decoding JWT token:', error);
+      }
+    }
+  }
+
+  // Restrict actions based on role
+  canEdit(): boolean {
+    return this.userRole === 'ADMIN';
+  }
+
+  canAdd(): boolean {
+    return this.userRole === 'ADMIN';
+  }
+
+  canDelete(): boolean {
+    return this.userRole === 'ADMIN';
+  }
+
+  canViewPayment(): boolean {
+    return this.userRole === 'USER' || this.userRole === 'ADMIN';
+  }
+
+  orderAllMenu() {
+    const totalSum = this.menus.reduce((sum, menu) => sum + menu.price, 0);
+    const invoiceData = {
+      items: this.menus,
+      total: totalSum,
+    };
+    localStorage.setItem('invoiceData', JSON.stringify(invoiceData));
+    this.router.navigate(['/invoice']);
   }
 
   // Load menus from service
