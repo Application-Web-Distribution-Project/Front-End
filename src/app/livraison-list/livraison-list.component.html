@@ -189,6 +189,12 @@
           <div class="section-header">
             <span class="material-icons">place</span>
             <h3>Adresse de livraison</h3>
+
+          </div>
+          <div class="gps-coordinates" *ngIf="selectedLivraison.latitude && selectedLivraison.longitude">
+            <p><strong>Coordonnées GPS :</strong></p>
+            <p>Latitude: {{formatCoordinate(selectedLivraison.latitude)}}</p>
+            <p>Longitude: {{formatCoordinate(selectedLivraison.longitude)}}</p>
           </div>
 
           <div class="address-card">
@@ -197,7 +203,8 @@
             <div class="address-details">
               <div class="address-map">
                 <!-- Utilisation de Mapbox à la place de Google Maps -->
-                <img *ngIf="selectedLivraison.latitude && selectedLivraison.longitude" [src]="'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-l+f74e4e(' + 
+                <img *ngIf="selectedLivraison.latitude && selectedLivraison.longitude"
+                  [src]="'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-l+f74e4e(' + 
           selectedLivraison.longitude + ',' + selectedLivraison.latitude + 
           ')/' + selectedLivraison.longitude + ',' + selectedLivraison.latitude + 
           ',14,0/600x200?access_token=pk.eyJ1IjoiYXltZW5qYWxsb3VsaSIsImEiOiJjbThnbDA3eTIwanY2MmxzZDdpZXJocGVuIn0.5CM0j5TSsORXd6mbsTf-6Q'" alt="Carte de localisation" class="map-image">

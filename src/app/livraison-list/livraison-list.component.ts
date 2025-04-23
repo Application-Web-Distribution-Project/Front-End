@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { User } from '../models/user.model';
 
 export enum Status {
   EN_ATTENTE = 'EN_ATTENTE',
@@ -13,6 +14,13 @@ export interface Commande {
   id: number;
   reference: string;
   montant: number;
+  userId: string;  // ID de l'utilisateur qui a passé la commande
+  user?: User;     // Information de l'utilisateur
+  dateCommande: string;
+  status: string;
+  menuIds: string[];
+  paymentStatus?: string;
+  paymentIntentId?: string;
 }
 
 export interface Livraison {
@@ -50,7 +58,9 @@ export class LivraisonListComponent implements OnInit {
   selectedLivraison: Livraison | null = null;
   selectedStatus: Status | null = null;
   apiUrl = 'http://localhost:8083/livraisons';
-  commandeApiUrl = 'http://localhost:8083/commandes'; // Ajout d'un URL pour l'API des commandes
+  commandeApiUrl = 'http://localhost:8083/commandes';
+  userApiUrl = 'http://localhost:8083/users';  // URL pour l'API des utilisateurs
+  emailApiUrl = 'http://localhost:8083/emails'; // URL pour l'API d'envoi d'emails
   Status = Status;
   statusValues = Object.values(Status);
   currentLivreurId = 1; // À remplacer par l'ID réel du livreur connecté
@@ -61,6 +71,10 @@ export class LivraisonListComponent implements OnInit {
     this.loadLivraisons();
   }
 
+  formatCoordinate(coord: number): string {
+    return coord?.toFixed(5) ?? '';
+  }
+  
   formatTime(date: any): string {
     return new Date(date).toLocaleTimeString();
   }
@@ -96,9 +110,25 @@ export class LivraisonListComponent implements OnInit {
     this.http.get<Commande>(`${this.commandeApiUrl}/${livraison.commandeId}`).subscribe(
       (commande) => {
         livraison.commande = commande;
+        
+        // Si la commande a un utilisateur associé, charger les détails de l'utilisateur
+        if (commande.userId) {
+          this.loadUserDetails(commande);
+        }
       },
       (error) => {
         console.error(`Erreur lors du chargement des détails de la commande ${livraison.commandeId}`, error);
+      }
+    );
+  }
+
+  loadUserDetails(commande: Commande): void {
+    this.http.get<User>(`${this.userApiUrl}/${commande.userId}`).subscribe(
+      (user) => {
+        commande.user = user;
+      },
+      (error) => {
+        console.error(`Erreur lors du chargement des détails de l'utilisateur ${commande.userId}`, error);
       }
     );
   }
@@ -159,6 +189,70 @@ export class LivraisonListComponent implements OnInit {
     );
   }
 
+  markAsDelivered(livraison: Livraison): void {
+    if (livraison.status !== Status.EN_COURS_DE_LIVRAISON) {
+      alert('Seules les livraisons en cours peuvent être marquées comme livrées');
+      return;
+    }
+  
+    if (confirm('Confirmez-vous que cette livraison a été complétée ?')) {
+      // Mettre à jour le statut de la livraison
+      this.changeStatus(livraison, Status.LIVREE);
+      
+      // Envoyer un email de confirmation à l'utilisateur
+      if (livraison.commande && livraison.commande.user) {
+        this.sendDeliveryConfirmationEmail(livraison);
+      } else if (livraison.commande && livraison.commande.userId) {
+        // Si l'utilisateur n'est pas encore chargé, nous le récupérons d'abord
+        this.http.get<User>(`${this.userApiUrl}/${livraison.commande.userId}`).subscribe(
+          (user) => {
+            if (livraison.commande) {
+              livraison.commande.user = user;
+              this.sendDeliveryConfirmationEmail(livraison);
+            }
+          },
+          (error) => {
+            console.error(`Erreur lors du chargement de l'utilisateur pour envoyer l'email`, error);
+          }
+        );
+      } else {
+        console.warn('Impossible d\'envoyer un email: Aucune information utilisateur disponible');
+      }
+    }
+  }
+
+  sendDeliveryConfirmationEmail(livraison: Livraison): void {
+    // Assurez-vous que les informations nécessaires sont disponibles
+    if (!livraison.commande || !livraison.commande.user) {
+      console.error('Informations manquantes pour envoyer l\'email');
+      return;
+    }
+
+    const user = livraison.commande.user;
+    const commandeRef = livraison.commande.reference;
+    const emailData = {
+      to: user.email,
+      subject: `Votre commande #${commandeRef} a été livrée`,
+      content: `
+        <h2>Confirmation de livraison</h2>
+        <p>Bonjour ${user.nom},</p>
+        <p>Nous vous confirmons que votre commande #${commandeRef} a bien été livrée.</p>
+        <p>Montant total : ${this.formatPrice(livraison.commande.montant)}</p>
+        <p>Date de livraison : ${new Date().toLocaleString('fr-FR')}</p>
+        <p>Merci de votre confiance et à bientôt !</p>
+      `
+    };
+
+    this.http.post(`${this.emailApiUrl}/send`, emailData).subscribe(
+      () => {
+        console.log(`Email de confirmation envoyé à ${user.email}`);
+      },
+      (error) => {
+        console.error('Erreur lors de l\'envoi de l\'email de confirmation', error);
+      }
+    );
+  }
+
   getStatusColor(status: Status): string {
     switch(status) {
       case Status.EN_ATTENTE: return '#FF9F1C'; // Orange vif
@@ -211,17 +305,6 @@ export class LivraisonListComponent implements OnInit {
       case Status.LIVREE: return 'check_circle';
       case Status.ANNULEE: return 'cancel';
       default: return 'help';
-    }
-  }
-
-  markAsDelivered(livraison: Livraison): void {
-    if (livraison.status !== Status.EN_COURS_DE_LIVRAISON) {
-      alert('Seules les livraisons en cours peuvent être marquées comme livrées');
-      return;
-    }
-  
-    if (confirm('Confirmez-vous que cette livraison a été complétée ?')) {
-      this.changeStatus(livraison, Status.LIVREE);
     }
   }
 

@@ -300,7 +300,7 @@ h1 {
   background: none;
   border: none;
   cursor: pointer;
-  color: #95a5a6;
+  color: #2c3e50;
   padding: 5px;
   border-radius: 50%;
   transition: all 0.2s;
@@ -595,5 +595,35 @@ h1 {
 
   .status-badge {
     margin-left: 0;
+  }
+
+  .address-text {
+    margin-bottom: 20px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 4px;
+  }
+  
+  .address-text p {
+    margin: 5px 0;
+  }
+  
+  .gps-coordinates {
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #666;
+  }
+  
+  .map-image {
+    width: 100%;
+    border-radius: 4px;
+    margin-top: 10px;
+  }
+  
+  .map-placeholder {
+    padding: 20px;
+    text-align: center;
+    background: #f5f5f5;
+    border-radius: 4px;
   }
 }
