@@ -1,0 +1,40 @@
+<div class="tracking-container">
+  <div class="map-container">
+    <div id="map" class="map"></div>
+
+    <div class="map-overlay" *ngIf="errorMessage">
+      <div class="error-message">
+        {{ errorMessage }}
+        <button (click)="initTracking()">Réessayer</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tracking-info">
+    <button (click)="initTracking()" class="init-button">
+      Démarrer le suivi
+    </button>
+    
+
+    <div class="info-card">
+      <h3>Statut</h3>
+      <p>{{ status }}</p>
+    </div>
+
+    <div class="info-card">
+      <h3>Temps estimé</h3>
+      <p>{{ estimatedTime }}</p>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div class="user-legend-icon"></div>
+        <span>Votre position</span>
+      </div>
+      <div class="legend-item">
+        <div class="delivery-legend-icon"></div>
+        <span>Livreur</span>
+      </div>
+    </div>
+  </div>
+</div>

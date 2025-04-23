@@ -1,8 +1,13 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { TrackingComponent } from './tracking-component/tracking-component.component';
+import { LivraisonListComponent } from './livraison-list/livraison-list.component';
 import { ReclamationStatsComponent } from './components/pages/Reclamation/reclamation-stats/reclamation-stats.component';
+import { imageOverlay } from 'leaflet';
 
 const routes: Routes = [
+  { path: 'tracking/:id', component: TrackingComponent},
+  { path: 'livraisonn', component: LivraisonListComponent},
   { path: '', loadChildren: () => import('./components/pages/home/home.module').then(m => m.HomeModule), data: { breadcrumb: 'Homepage' } },
   { path: 'home-v2', loadChildren: () => import('./components/pages/hometwo/hometwo.module').then(m => m.HometwoModule), data: { breadcrumb: 'Homepage' } },
   { path: 'home-v3', loadChildren: () => import('./components/pages/homethree/homethree.module').then(m => m.HomethreeModule), data: { breadcrumb: 'Homepage' } },
@@ -24,6 +29,7 @@ const routes: Routes = [
   { path: 'menu-item-v2/:id', loadChildren: () => import('./components/pages/menuitemtwo/menuitemtwo.module').then(m => m.MenuitemtwoModule), data: { breadcrumb: 'Menu Item v2' } },
   { path: 'locations', loadChildren: () => import('./components/pages/locations/locations.module').then(m => m.LocationsModule), data: { breadcrumb: 'Locations' } },
   { path: 'contact', loadChildren: () => import('./components/pages/contact/contact.module').then(m => m.ContactModule), data: { breadcrumb: 'Contact Us' } },
+  
   { 
     path: 'reclamations', 
     loadChildren: () => import('./components/pages/Reclamation/reclamation.module').then(m => m.ReclamationModule), 

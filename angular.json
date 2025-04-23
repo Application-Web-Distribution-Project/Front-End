@@ -13,6 +13,10 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+              "mapbox-gl",
+              "mapbox-gl/*"
+            ],
             "outputPath": "dist/Slices",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -31,6 +35,7 @@
               "src/assets/fonts/flaticon/flaticon.css",
               "src/assets/fonts/font-awesome/css/all.min.css",
               "src/assets/css/style.css",
+              "node_modules/mapbox-gl/dist/mapbox-gl.css",
               "src/styles.css"
             ],
             "scripts": [
@@ -98,6 +103,7 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/mapbox-gl/dist/mapbox-gl.css",
               "src/styles.css"
             ],
             "scripts": []

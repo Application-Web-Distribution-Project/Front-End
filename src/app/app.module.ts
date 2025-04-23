@@ -1,30 +1,40 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BreadcrumbModule } from 'angular-crumbs';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { PreloaderComponent } from './preloader/preloader.component';
+import { SharedModule } from "./components/shared/shared.module";
+import { LivraisonListComponent } from './livraison-list/livraison-list.component';
+import { TrackingComponent } from './tracking-component/tracking-component.component';  
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
     AppComponent,
-    PreloaderComponent
+    PreloaderComponent,
+    LivraisonListComponent,
+    TrackingComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     BreadcrumbModule,
-    NgbModule
+    NgbModule,
+    SharedModule,
+    CommonModule 
+],
+  providers: [
+    
   ],
-  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

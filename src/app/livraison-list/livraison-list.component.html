@@ -1,0 +1,259 @@
+<!-- livraison-list.component.html -->
+<app-headerinner></app-headerinner>
+<div class="livraison-app">
+  <div class="app-header">
+    <div class="header-content" style="margin-top: 120px;">
+      <h1>
+        Gestion des Livraisons
+      </h1>
+      <div class="header-actions">
+        <div class="search-box">
+          <span class="material-icons">search</span>
+          <input type="text" placeholder="Rechercher une livraison...">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <!-- Filtres -->
+    <div class="filters-section">
+      <div class="status-filters">
+        <button *ngFor="let status of statusValues" [class.active]="selectedStatus === status"
+          (click)="toggleStatusFilter(status)" [style.background]="getStatusColor(status)">
+          <span class="material-icons">{{getStatusIcon(status)}}</span>
+          {{formatStatus(status)}}
+          <span class="count-badge">{{getStatusCount(status)}}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Liste des livraisons - Version modernisée -->
+    <div class="modern-livraison-grid">
+      <div *ngFor="let livraison of filteredLivraisons" class="modern-livraison-card"
+        [style.border-top-color]="getStatusColor(livraison.status)" (click)="viewDetails(livraison)">
+        <div class="card-header">
+          <div class="card-id">
+            <span>#{{livraison.id}}</span>
+          </div>
+          <div class="card-status" [style.background]="getStatusColor(livraison.status)">
+            {{formatStatus(livraison.status)}}
+          </div>
+        </div>
+
+        <div class="card-content">
+          <div class="info-row">
+            <span class="material-icons icon-accent">receipt</span>
+            <div class="info-text">
+              <label>Commande</label>
+              <p>#{{livraison.commandeId}}</p>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <span class="material-icons icon-accent">place</span>
+            <div class="info-text">
+              <label>Adresse</label>
+              <p>{{livraison.adresseLivraison}}</p>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <span class="material-icons icon-accent">schedule</span>
+            <div class="info-text">
+              <label>Date</label>
+              <p>{{formatDate(livraison.dateHeureCommande)}}</p>
+            </div>
+          </div>
+
+          <!-- Affichage du montant de la commande si disponible -->
+          <div class="info-row" *ngIf="livraison.commande">
+            <span class="material-icons icon-accent">payments</span>
+            <div class="info-text">
+              <label>Montant</label>
+              <p>{{formatPrice(livraison.commande.montant)}}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <button class="modern-details-btn">
+            Voir détails
+            <span class="material-icons">arrow_forward</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aucune donnée -->
+    <div *ngIf="filteredLivraisons.length === 0" class="modern-empty-state">
+      <div class="empty-content">
+        <span class="material-icons">inventory_2</span>
+        <h3>Aucune livraison trouvée</h3>
+        <p>Il n'y a aucune livraison correspondant à vos critères</p>
+        <button (click)="resetFilters()" class="modern-reset-btn">
+          Réinitialiser les filtres
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Détails de la livraison - Version améliorée -->
+  <div *ngIf="selectedLivraison" class="details-overlay">
+    <div class="details-container" [@slideInOut]>
+      <div class="details-header">
+        <div class="header-title">
+          <h2>Détails de la livraison #{{selectedLivraison.id}}</h2>
+          <div class="status-badge" [style.background]="getStatusColor(selectedLivraison.status)">
+            {{formatStatus(selectedLivraison.status)}}
+          </div>
+        </div>
+        <button class="close-btn" (click)="hideDetails()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+
+      <div class="details-content">
+        <!-- Section Infos -->
+        <div class="details-section">
+          <div class="section-header">
+            <span class="material-icons">info</span>
+            <h3>Informations générales</h3>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-icon">
+                <span class="material-icons">receipt</span>
+              </div>
+              <div class="info-content">
+                <span class="info-label">Numéro de commande</span>
+                <span class="info-value">#{{selectedLivraison.commandeId}}</span>
+              </div>
+            </div>
+
+            <div class="info-card" *ngIf="selectedLivraison.commande">
+              <div class="info-icon">
+                <span class="material-icons">payments</span>
+              </div>
+              <div class="info-content">
+                <span class="info-label">Montant</span>
+                <span class="info-value">{{formatPrice(selectedLivraison.commande.montant)}}</span>
+              </div>
+            </div>
+
+            <div class="info-card" *ngIf="selectedLivraison.commande">
+              <div class="info-icon">
+                <span class="material-icons">tag</span>
+              </div>
+              <div class="info-content">
+                <span class="info-label">Référence</span>
+                <span class="info-value">{{selectedLivraison.commande.reference}}</span>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <div class="info-icon">
+                <span class="material-icons">person</span>
+              </div>
+              <div class="info-content">
+                <span class="info-label">Livreur assigné</span>
+                <span class="info-value">{{selectedLivraison.livreurId || 'Non assigné'}}</span>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <div class="info-icon">
+                <span class="material-icons">event</span>
+              </div>
+              <div class="info-content">
+                <span class="info-label">Date de commande</span>
+                <span class="info-value">{{formatDate(selectedLivraison.dateHeureCommande)}}</span>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <div class="info-icon">
+                <span class="material-icons">schedule</span>
+              </div>
+              <div class="info-content">
+                <span class="info-label">Heure estimée de livraison</span>
+                <span class="info-value">{{calculateEstimatedDeliveryTime(selectedLivraison.dateHeureCommande)}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Adresse avec Mapbox -->
+        <div class="details-section">
+          <div class="section-header">
+            <span class="material-icons">place</span>
+            <h3>Adresse de livraison</h3>
+          </div>
+
+          <div class="address-card">
+            <div class="address-icon">
+            </div>
+            <div class="address-details">
+              <div class="address-map">
+                <!-- Utilisation de Mapbox à la place de Google Maps -->
+                <img *ngIf="selectedLivraison.latitude && selectedLivraison.longitude" [src]="'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-l+f74e4e(' + 
+          selectedLivraison.longitude + ',' + selectedLivraison.latitude + 
+          ')/' + selectedLivraison.longitude + ',' + selectedLivraison.latitude + 
+          ',14,0/600x200?access_token=pk.eyJ1IjoiYXltZW5qYWxsb3VsaSIsImEiOiJjbThnbDA3eTIwanY2MmxzZDdpZXJocGVuIn0.5CM0j5TSsORXd6mbsTf-6Q'" alt="Carte de localisation" class="map-image">
+                <div *ngIf="!selectedLivraison.latitude || !selectedLivraison.longitude" class="map-placeholder">
+                  <p>Coordonnées GPS non disponibles</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Commande - Remplace la section Produits -->
+        <div class="details-section" *ngIf="selectedLivraison.commande">
+          <div class="section-header">
+            <span class="material-icons">shopping_cart</span>
+            <h3>Détails de la commande</h3>
+          </div>
+
+          <div class="commande-details">
+            <div class="commande-card">
+              <div class="commande-row">
+                <div class="commande-label">
+                  <span class="material-icons">label</span>
+                  Référence:
+                </div>
+                <div class="commande-value">{{selectedLivraison.commande.reference}}</div>
+              </div>
+              <div class="commande-row">
+                <div class="commande-label">
+                  <span class="material-icons">payments</span>
+                  Montant:
+                </div>
+                <div class="commande-value">{{formatPrice(selectedLivraison.commande.montant)}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="details-section actions-section">
+          <div class="actions-grid">
+            <!-- Bouton d'assignation seulement si en attente -->
+            <button *ngIf="selectedLivraison.status === Status.EN_ATTENTE" class="action-btn assign-btn"
+              (click)="assignToMe(selectedLivraison)">
+              <span class="material-icons">person_add</span>
+              S'assigner cette livraison
+            </button>
+            <button *ngIf="selectedLivraison.status === Status.EN_COURS_DE_LIVRAISON" class="action-btn complete-btn"
+              (click)="markAsDelivered(selectedLivraison)">
+              <span class="material-icons">check_circle</span>
+              Marquer comme livrée
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

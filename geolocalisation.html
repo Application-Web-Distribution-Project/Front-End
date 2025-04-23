@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test de Géolocalisation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        button {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f0f0f0;
+        }
+        #map {
+            height: 300px;
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Autorisation de Géolocalisation</h1>
+    <p>Ce test va vous demander l'autorisation d'accéder à votre position.</p>
+    
+    <button id="locate-btn">Détecter ma position</button>
+    
+    <div id="result">
+        En attente d'autorisation...
+    </div>
+    
+    <div id="map"></div>
+    
+    <script>
+        document.getElementById('locate-btn').addEventListener('click', () => {
+            const resultDiv = document.getElementById('result');
+            
+            if (!navigator.geolocation) {
+                resultDiv.innerHTML = "Votre navigateur ne supporte pas la géolocalisation";
+                return;
+            }
+            
+            resultDiv.innerHTML = "Demande d'autorisation en cours...";
+            
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    const accuracy = position.coords.accuracy;
+                    
+                    resultDiv.innerHTML = `
+                        <strong>Position détectée avec succès!</strong><br>
+                        Latitude: ${lat.toFixed(6)}<br>
+                        Longitude: ${lng.toFixed(6)}<br>
+                        Précision: ~${Math.round(accuracy)} mètres
+                    `;
+                    
+                    // Afficher la carte si l'API est disponible
+                    if (typeof google !== 'undefined') {
+                        showMap(lat, lng);
+                    }
+                    
+                    // Copier les coordonnées dans le presse-papier
+                    navigator.clipboard.writeText(`${lat}, ${lng}`);
+                    setTimeout(() => {
+                        resultDiv.innerHTML += "<br><br>Coordonnées copiées dans le presse-papier!";
+                    }, 500);
+                },
+                (error) => {
+                    let errorMessage;
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = "Vous avez refusé l'accès à la géolocalisation. Autorisez-la dans les paramètres de Chrome.";
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = "Position indisponible (vérifiez votre connexion/GPS)";
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = "Délai de requête dépassé";
+                            break;
+                        default:
+                            errorMessage = "Erreur inconnue";
+                    }
+                    resultDiv.innerHTML = `<strong>Erreur:</strong> ${errorMessage}`;
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        });
+        
+        function showMap(lat, lng) {
+            const mapDiv = document.getElementById('map');
+            mapDiv.style.display = 'block';
+            
+            const map = new google.maps.Map(mapDiv, {
+                center: { lat, lng },
+                zoom: 15
+            });
+            
+            new google.maps.Marker({
+                position: { lat, lng },
+                map,
+                title: "Votre position"
+            });
+        }
+    </script>
+    
+    <!-- Chargement de l'API Google Maps (optionnel) -->
+    <script src="https://www.google.com/maps/search/?api=1&callback=initMap" async defer></script>
+</body>
+</html>
