@@ -1,3 +1,4 @@
+
 {
   "/reclamations": {
     "target": "http://localhost:8081",
@@ -34,6 +35,16 @@
     "pathRewrite": {
       "^/menus": "/menus"
     }
- 
+  },
+  "/livraisons": {
+    "target": "http://localhost:8081",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/livraisons": "/livraisons"
+    }
   }
 }
+}
+

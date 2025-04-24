@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError, TimeoutError, of } from 'rxjs';
@@ -232,3 +233,4 @@ export class ReclamationService {
     return throwError(() => new Error(errorMessage));
   }
 }
+

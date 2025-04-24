@@ -18,6 +18,7 @@ import { Router } from '@angular/router';
 import { CommandeService } from '../../../services/commande.service';
 import { catchError, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { LivraisonService } from '../../../services/livraison.service';
 
 @Component({
   selector: 'app-invoice',
@@ -58,7 +59,8 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
     private http: HttpClient,
     private modalService: NgbModal,
     private router: Router,
-    private commandeService: CommandeService
+    private commandeService: CommandeService,
+    private livraisonService: LivraisonService
   ) {}
 
   ngOnInit(): void {
@@ -206,7 +208,6 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
     return true;
   }
 
-  // Modified method with correct status values
   processPayment(modal: any, form: any): void {
     // Prevent multiple submissions
     if (this.isLoading || this.isCommandCreated) {
@@ -246,17 +247,37 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
           modal.close();
 
           // Show success message and redirect
-          /*alert(
-            'Paiement réussi ! Vous allez être redirigé vers vos commandes.'
-          );*/
           this.router.navigate(['/commande']);
         })
       )
       .subscribe((result) => {
         if (result) {
           console.log('✅ Commande créée avec succès:', result);
+
+          // Create delivery after successful command creation
+          const livraison = {
+            livreurId: null,
+            commandeId: result.id, // Use the ID of the created command
+            status: 'EN_ATTENTE',
+            adresseLivraison: '123 Rue de Paris',
+            dateHeureCommande: result.dateCommande,
+            latitude: 36.95514,
+            longitude: 10.15810,
+            confirmeParClient: false,
+            annulee: false,
+            raisonAnnulation: null,
+            dateLivraison: new Date().toISOString(),
+          };
+
+          this.livraisonService.createLivraison(livraison).subscribe(
+            (deliveryResult) => {
+              console.log('✅ Livraison créée avec succès:', deliveryResult);
+            },
+            (deliveryError) => {
+              console.error('❌ Erreur lors de la création de la livraison:', deliveryError);
+            }
+          );
         }
-        // Note: redirect happens in finalize, so it occurs whether the API call succeeds or fails
       });
   }
 }

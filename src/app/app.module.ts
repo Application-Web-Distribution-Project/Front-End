@@ -13,9 +13,10 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { SharedModule } from './components/shared/shared.module';
 import { MenuListComponent } from './components/pages/menu/menulist/menulist.component';
 import { InvoiceModule } from './components/pages/invoice/invoice.module';
+import { LivraisonListComponent } from './livraison-list/livraison-list.component';
 
 @NgModule({
-  declarations: [AppComponent, PreloaderComponent, MenuListComponent],
+  declarations: [AppComponent, PreloaderComponent, MenuListComponent, LivraisonListComponent],
   imports: [
     BrowserModule,
     FormsModule,

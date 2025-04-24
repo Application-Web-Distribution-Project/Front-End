@@ -1,3 +1,5 @@
+
+
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
@@ -175,4 +177,5 @@ export class AuthService {
       confirmPassword
     }).pipe(catchError(this.handleError));
   }
+
 }
