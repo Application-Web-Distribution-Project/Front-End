@@ -5,6 +5,8 @@ import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
 import { finalize } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ForgotPasswordModalComponent } from '../../shared/forgot-password-modal/forgot-password-modal.component';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +20,7 @@ export class LoginComponent implements OnInit {
   
   loginForm: FormGroup;
   isSubmitting = false;
-  loginError = '';
+  loginError: string = null;
   returnUrl: string = '/home'; 
   
   constructor(
@@ -26,7 +28,8 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     private userService: UserService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private modalService: NgbModal
   ) {
     // Initialiser le formulaire
     this.loginForm = this.fb.group({
@@ -98,5 +101,22 @@ export class LoginComponent implements OnInit {
           }
         }
       });
+  }
+
+  openForgotPasswordModal() {
+    const modalRef = this.modalService.open(ForgotPasswordModalComponent, { centered: true });
+    
+    modalRef.result.then(
+      (result) => {
+        if (result && result.success) {
+          // Handle success - maybe show a notification
+          this.loginError = null;
+          alert('Un email de réinitialisation a été envoyé à votre adresse email.');
+        }
+      },
+      () => {
+        // Modal dismissed
+      }
+    );
   }
 }

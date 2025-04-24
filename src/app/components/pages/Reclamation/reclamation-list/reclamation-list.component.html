@@ -20,7 +20,7 @@
           class="form-control search-input" 
           placeholder="Rechercher une réclamation..." 
           [(ngModel)]="searchQuery"
-          (keyup)="search(searchQuery)"
+          (input)="search(searchQuery)"
           aria-label="Recherche"
         >
         <button 
