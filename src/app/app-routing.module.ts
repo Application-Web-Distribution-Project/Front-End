@@ -4,8 +4,10 @@ import { ReclamationStatsComponent } from './components/pages/Reclamation/reclam
 import { AuthGuard } from './guards/auth.guard';
 import { NonAuthGuard } from './guards/non-auth.guard';
 import { MenuListComponent } from './components/pages/menu/menulist/menulist.component';
+import { LivraisonListComponent } from './livraison-list/livraison-list.component';
 
 const routes: Routes = [
+  { path: 'livraisons', component: LivraisonListComponent },
   {
     path: '',
     redirectTo: localStorage.getItem('JWT_TOKEN') ? '/home' : '/login',
