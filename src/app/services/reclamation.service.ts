@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError, TimeoutError, of } from 'rxjs';
@@ -48,10 +49,20 @@ export class ReclamationService {
       return this.getAllReclamations();
     }
     
-    // Créer les paramètres de recherche
+    // Option 1: Recherche côté serveur (décommentez si votre API supporte la recherche)
+    /*
     const params = new HttpParams().set('query', query);
+    return this.http.get<Reclamation[]>(`${this.apiUrl}/search`, {
+      headers: this.getHttpOptions().headers,
+      params: params
+    }).pipe(
+      timeout(this.TIMEOUT),
+      retry(this.RETRY_ATTEMPTS),
+      catchError(this.handleError.bind(this))
+    );
+    */
     
-    // Solution alternative est de rechercher côté client:
+    // Option 2: Recherche côté client
     return this.getAllReclamations().pipe(
       map(reclamations => {
         const lowercaseQuery = query.toLowerCase();
@@ -59,6 +70,10 @@ export class ReclamationService {
           (reclamation.description?.toLowerCase().includes(lowercaseQuery)) ||
           (reclamation.status?.toLowerCase().includes(lowercaseQuery))
         );
+      }),
+      catchError(error => {
+        console.error('Search error:', error);
+        return of([]);  // Retourner un tableau vide en cas d'erreur
       })
     );
   }
@@ -218,3 +233,4 @@ export class ReclamationService {
     return throwError(() => new Error(errorMessage));
   }
 }
+

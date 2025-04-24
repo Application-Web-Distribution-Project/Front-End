@@ -1,3 +1,5 @@
+
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -8,6 +10,7 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true
@@ -29,11 +32,28 @@ import { RelatedblogComponent } from './relatedblog/relatedblog.component';
 import { RelatedproductComponent } from './relatedproduct/relatedproduct.component';
 import { RelatedproductoneComponent } from './relatedproductone/relatedproductone.component';
 import { SearchComponent } from './search/search.component';
-
-
+import { ForgotPasswordModalComponent } from './forgot-password-modal/forgot-password-modal.component';
 
 @NgModule({
-  declarations: [BlogsidebarComponent, BreadcrumbComponent, CartlistComponent, FooterComponent, HeaderComponent, HeadertwoComponent, HeaderthreeComponent, HeaderfourComponent, HeaderinnerComponent, MenuComponent, MobilemenuComponent, QuickviewComponent, RelatedblogComponent, RelatedproductComponent, RelatedproductoneComponent, SearchComponent],
+  declarations: [
+    BlogsidebarComponent,
+    BreadcrumbComponent,
+    CartlistComponent,
+    FooterComponent,
+    HeaderComponent,
+    HeadertwoComponent,
+    HeaderthreeComponent,
+    HeaderfourComponent,
+    HeaderinnerComponent,
+    MenuComponent,
+    MobilemenuComponent,
+    QuickviewComponent,
+    RelatedblogComponent,
+    RelatedproductComponent,
+    RelatedproductoneComponent,
+    SearchComponent,
+    ForgotPasswordModalComponent
+  ],
   imports: [
     CommonModule,
     RouterModule,
@@ -41,7 +61,9 @@ import { SearchComponent } from './search/search.component';
     NgbModule,
     BreadcrumbModule,
     HttpClientModule,
-    PerfectScrollbarModule
+    PerfectScrollbarModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     {
@@ -49,6 +71,28 @@ import { SearchComponent } from './search/search.component';
       useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
     }
   ],
-  exports:[BlogsidebarComponent, BreadcrumbComponent, CartlistComponent, FooterComponent, HeaderComponent, HeadertwoComponent, HeaderthreeComponent, HeaderfourComponent, HeaderinnerComponent, MenuComponent, MobilemenuComponent, QuickviewComponent, RelatedblogComponent, RelatedproductComponent, RelatedproductoneComponent, SearchComponent]
+  exports: [
+    BlogsidebarComponent,
+    BreadcrumbComponent,
+    CartlistComponent,
+    FooterComponent,
+    HeaderComponent,
+    HeadertwoComponent,
+    HeaderthreeComponent,
+    HeaderfourComponent,
+    HeaderinnerComponent,
+    MenuComponent,
+    MobilemenuComponent,
+    QuickviewComponent,
+    RelatedblogComponent,
+    RelatedproductComponent,
+    RelatedproductoneComponent,
+    SearchComponent,
+    ForgotPasswordModalComponent
+  ],
+  entryComponents: [
+    ForgotPasswordModalComponent
+  ]
 })
 export class SharedModule { }
+

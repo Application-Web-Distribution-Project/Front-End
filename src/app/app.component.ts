@@ -1,3 +1,5 @@
+
+  
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { BreadcrumbService, Breadcrumb } from 'angular-crumbs';
@@ -65,12 +67,7 @@ export class AppComponent implements OnInit {
       this.router.navigate(['/home']);
     }
     
-    // Si l'utilisateur n'est pas connecté et n'est pas sur login/register
-    if (!isLoggedIn && currentUrl !== '/login' && currentUrl !== '/register' 
-        && !currentUrl.startsWith('/about') && !currentUrl.startsWith('/menu')
-        && !currentUrl.startsWith('/blog') && currentUrl !== '/contact'
-        && currentUrl !== '/locations' && currentUrl !== '/legal') {
-      this.router.navigate(['/login']);
-    }
+   
   }
 }
+

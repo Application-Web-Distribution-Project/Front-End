@@ -1,13 +1,15 @@
+
+  
+
+
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { ReclamationStatsComponent } from './components/pages/Reclamation/reclamation-stats/reclamation-stats.component';
 import { AuthGuard } from './guards/auth.guard';
 import { NonAuthGuard } from './guards/non-auth.guard';
 import { MenuListComponent } from './components/pages/menu/menulist/menulist.component';
-import { LivraisonListComponent } from './livraison-list/livraison-list.component';
 
 const routes: Routes = [
-  { path: 'livraisons', component: LivraisonListComponent },
   {
     path: '',
     redirectTo: localStorage.getItem('JWT_TOKEN') ? '/home' : '/login',
@@ -22,12 +24,14 @@ const routes: Routes = [
     data: { breadcrumb: 'Login' },
     canActivate: [NonAuthGuard],
   },
-  {
-    path: 'register',
-    loadChildren: () =>
-      import('./components/pages/register/register.module').then(
-        (m) => m.RegisterModule
-      ),
+  { 
+    path: 'reset-password', 
+    loadChildren: () => import('./components/pages/reset-password/reset-password.module').then(m => m.ResetPasswordModule), 
+    data: { breadcrumb: 'Reset Password' }
+  },
+  { 
+    path: 'register', 
+    loadChildren: () => import('./components/pages/register/register.module').then(m => m.RegisterModule), 
     data: { breadcrumb: 'Register' },
     canActivate: [NonAuthGuard],
   },
@@ -233,3 +237,4 @@ const routes: Routes = [
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
+

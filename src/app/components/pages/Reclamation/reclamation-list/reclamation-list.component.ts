@@ -1,10 +1,11 @@
+
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ReclamationService } from 'src/app/services/reclamation.service';
 import { Reclamation } from 'src/app/models/reclamation.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 import { catchError, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { EMPTY, Subject, Subscription } from 'rxjs';
+import { EMPTY, Subject, Subscription, of } from 'rxjs';
 import { UserService } from 'src/app/services/user.service';
 import { AuthService } from 'src/app/services/auth.service';
 
@@ -56,19 +57,9 @@ export class ReclamationListComponent implements OnInit, OnDestroy {
     // Configuration de la recherche avec debounce pour éviter trop d'appels API
     this.searchSubscription = this.searchTerms.pipe(
       debounceTime(300), // Attend 300ms après chaque frappe
-      distinctUntilChanged(), // Ignore si le terme de recherche est le même
-      switchMap(term => {
-        this.isLoading = true;
-        return this.reclamationService.searchReclamations(term);
-      }),
-      catchError(error => {
-        this.errorMessage = 'Erreur lors de la recherche: ' + error.message;
-        this.isLoading = false;
-        return EMPTY;
-      })
-    ).subscribe(results => {
-      this.reclamations = results;
-      this.isLoading = false;
+      distinctUntilChanged() // Ignore si le terme de recherche est le même
+    ).subscribe(term => {
+      this.performSearch(term);
     });
   }
   
@@ -84,13 +75,34 @@ export class ReclamationListComponent implements OnInit, OnDestroy {
     this.searchTerms.next(term);
   }
 
+  // Nouvelle méthode pour effectuer la recherche côté client
+  performSearch(term: string): void {
+    this.isLoading = true;
+    
+    if (!term.trim()) {
+      // Si la recherche est vide, afficher toutes les réclamations
+      this.reclamations = [...this.allReclamations];
+      this.isLoading = false;
+      return;
+    }
+    
+    // Recherche côté client
+    const lowercaseTerm = term.toLowerCase();
+    this.reclamations = this.allReclamations.filter(reclamation => 
+      (reclamation.description?.toLowerCase().includes(lowercaseTerm)) ||
+      (reclamation.status?.toLowerCase().includes(lowercaseTerm))
+    );
+    
+    this.isLoading = false;
+  }
+
   // ✅ Charger la liste des réclamations
   loadReclamations(): void {
     this.isLoading = true;
     this.reclamationService.getAllReclamations().subscribe({
       next: (data) => {
-        this.reclamations = data;
         this.allReclamations = data; // Sauvegarde de toutes les réclamations
+        this.reclamations = data;
         this.isLoading = false;
       },
       error: (error) => {
@@ -159,18 +171,13 @@ export class ReclamationListComponent implements OnInit, OnDestroy {
   }
 
   updateStatus(id: number, newStatus: string): void {
-    
-    
-    
     this.reclamationService.updateReclamationStatus(id, newStatus)
-     
       .subscribe({
         next: (updated) => {
           console.log('Status updated successfully:', updated);
           alert('Statut mis à jour avec succès!');
           this.loadReclamations();
         }
-        
       });
   }
 
